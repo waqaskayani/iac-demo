@@ -1,6 +1,7 @@
 .*
 *.tfstate*
 *.tfplan
+*.tfvars
 variables.tf
 ssm_params.tf
 !/.gitignore
