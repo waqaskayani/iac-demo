@@ -14,5 +14,6 @@ module "vpc" {
   tags = {
     Purpose = "Testing EKS working for Velocidata"
     CreatedBy = "Waqas Kayani"
+    ManagedBy = "Terraform"
   }
 }
