@@ -20,7 +20,7 @@ module "eks" {
             max_capacity     = 3
             min_capacity     = 1
 
-            instance_type    = "t2.small"
+            instance_types   = ["t2.small"]
             k8s_labels = {
                 Environment = "private"
             }
