@@ -19,4 +19,9 @@ module "eks" {
         asg_max_size  = 1
         }
     ]
+
+    tags = {
+        Environment = "staging"
+        Organization = "Emumba"
+    }
 }
