@@ -21,10 +21,17 @@ module "my-cluster" {
     subnets         = data.aws_subnet_ids.private_subnets.ids
     vpc_id          = module.vpc.vpc_id
 
-    worker_groups = [
-        {
-        instance_type = "t2.medium"
-        asg_max_size  = 1
+    node_groups = {
+        private = {
+            subnets = data.aws_subnet_ids.private_subnets.ids
+            desired_capacity = 1
+            max_capacity     = 3
+            min_capacity     = 1
+
+            instance_type    = "t2.small"
+            k8s_labels = {
+                Environment = "private"
+            }
         }
-    ]
+    }
 }
