@@ -20,15 +20,6 @@ module "vpc" {
   }
 }
 
-data "aws_subnet_ids" "private_subnets" {
-  vpc_id = module.vpc.vpc_id
-
-  filter {
-    name   = "cidr-block"
-    values = [cidrsubnet(var.eks_vpc_cidr, 8, 1), cidrsubnet(var.eks_vpc_cidr, 8, 2), cidrsubnet(var.eks_vpc_cidr, 8, 3)]
-  }
-}
-
 
 #######################
 ##### Wireguard SG ####

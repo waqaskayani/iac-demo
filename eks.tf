@@ -10,12 +10,12 @@ module "eks" {
     source                          = "terraform-aws-modules/eks/aws"
     cluster_name                    = "vd-staging-cluster"
     cluster_version                 = "1.20"  # 1.20.4
-    subnets                         = data.aws_subnet_ids.private_subnets.ids
+    subnets                         = module.vpc.private_subnets
     vpc_id                          = module.vpc.vpc_id
     cluster_endpoint_public_access  = false
     cluster_endpoint_private_access = true
     cluster_create_endpoint_private_access_sg_rule = true
-    cluster_endpoint_private_access_cidrs          = [ "182.191.83.208/32", "115.186.190.137/32" ]
+    cluster_endpoint_private_access_cidrs          = [ "182.191.83.208/32", "115.186.190.137/32" , "18.191.140.48/32"]
 
     worker_groups = [
         {
