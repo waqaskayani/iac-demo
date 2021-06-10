@@ -7,11 +7,12 @@ data "aws_eks_cluster_auth" "cluster" {
 }
 
 module "eks" {
-    source          = "terraform-aws-modules/eks/aws"
-    cluster_name    = "vd-cluster"
-    cluster_version = "1.20.4"
-    subnets         = data.aws_subnet_ids.private_subnets.ids
-    vpc_id          = module.vpc.vpc_id
+    source                          = "terraform-aws-modules/eks/aws"
+    cluster_name                    = "vd-cluster"
+    cluster_version                 = "1.20.4"
+    subnets                         = data.aws_subnet_ids.private_subnets.ids
+    vpc_id                          = module.vpc.vpc_id
+    cluster_endpoint_private_access = true
 
     worker_groups = [
         {
