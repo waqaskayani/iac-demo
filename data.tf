@@ -9,7 +9,6 @@ data "aws_iam_role" "aws_service_linked_role" {
 }
 
 data "aws_ami" "ubuntu" {
-
     most_recent = true
 
     filter {
@@ -17,5 +16,5 @@ data "aws_ami" "ubuntu" {
         values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
     }
 
-    owners = ["099720109477"]
+    owners      = ["amazon"]
 }
