@@ -9,7 +9,7 @@ data "aws_eks_cluster_auth" "cluster" {
 module "eks" {
     source                          = "terraform-aws-modules/eks/aws"
     cluster_name                    = "vd-cluster"
-    cluster_version                 = "1.18"
+    cluster_version                 = "1.18"  # 1.20.4
     subnets                         = data.aws_subnet_ids.private_subnets.ids
     vpc_id                          = module.vpc.vpc_id
     cluster_endpoint_public_access  = false
@@ -24,6 +24,13 @@ module "eks" {
             asg_desired_capacity = 1
             asg_max_size         = 3
             asg_min_size         = 1
+            /* root_volume_type     = "gp2"
+            root_volume_size     = 8
+            ami_id               = "ami-0000000000"
+            ebs_optimized     = false
+            key_name          = "all"
+            enable_monitoring = false */
+
             tags = [
                 {
                     "key"                 = "Environment"
