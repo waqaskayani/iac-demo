@@ -12,7 +12,10 @@ module "eks" {
     cluster_version                 = "1.20.4"
     subnets                         = data.aws_subnet_ids.private_subnets.ids
     vpc_id                          = module.vpc.vpc_id
+    cluster_endpoint_public_access  = false
     cluster_endpoint_private_access = true
+    cluster_create_endpoint_private_access_sg_rule = true
+    cluster_endpoint_private_access_cidrs          = [ var.vpc_cidr ]
 
     worker_groups = [
         {
