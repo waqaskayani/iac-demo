@@ -15,7 +15,7 @@ module "eks" {
     cluster_endpoint_public_access  = false
     cluster_endpoint_private_access = true
     cluster_create_endpoint_private_access_sg_rule = true
-    cluster_endpoint_private_access_cidrs          = [ var.eks_vpc_cidr ]
+    cluster_endpoint_private_access_cidrs          = [ "182.191.83.208/32", "115.186.190.137/32" ]
 
     worker_groups = [
         {
