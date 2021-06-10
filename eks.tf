@@ -20,9 +20,15 @@ module "eks" {
             max_capacity     = 3
             min_capacity     = 1
 
+            name_prefix      = "staging-vd-workers-"
             instance_types   = ["t2.small"]
             k8s_labels = {
-                Environment = "private"
+                Environment  = "private"
+            }
+
+            tags = {
+                Environment  = "staging"
+                Organization = "Emumba"
             }
         }
     }
