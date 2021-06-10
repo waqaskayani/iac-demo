@@ -33,6 +33,14 @@ module "eks" {
         }
     }
 
+    map_users = [
+        {
+            user_arn = "arn:aws:iam::390665042662:user/waqas.kiyani"
+            username = "waqas.kiyani"
+            group    = "system:masters"
+        }
+    ]
+
     tags = {
         Environment = "staging"
         Organization = "Emumba"
