@@ -8,18 +8,18 @@ data "aws_eks_cluster_auth" "cluster" {
 
 module "eks" {
     source                          = "terraform-aws-modules/eks/aws"
-    cluster_name                    = "vd-cluster"
+    cluster_name                    = "vd-staging-cluster"
     cluster_version                 = "1.20.4"  # 1.20.4
     subnets                         = data.aws_subnet_ids.private_subnets.ids
     vpc_id                          = module.vpc.vpc_id
     cluster_endpoint_public_access  = false
     cluster_endpoint_private_access = true
     cluster_create_endpoint_private_access_sg_rule = true
-    cluster_endpoint_private_access_cidrs          = [ var.vpc_cidr ]
+    cluster_endpoint_private_access_cidrs          = [ var.eks_vpc_cidr ]
 
     worker_groups = [
         {
-            name                 = "staging-vd-workers"
+            name                 = "vd-staging-workers"
             instance_type        = "t2.small"
             asg_desired_capacity = 1
             asg_max_size         = 3
@@ -53,5 +53,4 @@ module "eks" {
             groups   = ["system:masters"]
         }
     ]
-
 }
