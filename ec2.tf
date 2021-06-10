@@ -1,6 +1,6 @@
 resource "aws_launch_configuration" "wireguard_lc" {
     name_prefix           = "wireguard-lc"
-    image_id              = data.aws_ami.aws-linux-2.id
+    image_id              = data.aws_ami.ubuntu.id
     instance_type         = "t2.small"
     key_name              = var.key_name
     enable_monitoring     = false

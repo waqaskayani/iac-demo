@@ -8,8 +8,24 @@ data "aws_iam_role" "aws_service_linked_role" {
     name = "AWSServiceRoleForAutoScaling"
 }
 
+data "aws_ami" "ubuntu" {
 
-data "aws_ami" "aws-linux-2" {
+    most_recent = true
+
+    filter {
+        name   = "name"
+        values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    }
+
+    filter {
+        name = "virtualization-type"
+        values = ["hvm"]
+    }
+
+    owners = ["099720109477"]
+}
+
+/* data "aws_ami" "aws-linux-2" {
     most_recent = true
     owners      = ["amazon"]
 
@@ -32,4 +48,4 @@ data "aws_ami" "aws-linux-2" {
         name   = "architecture"
         values = ["x86_64"]
     }
-}
+} */
