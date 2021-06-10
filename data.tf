@@ -9,18 +9,27 @@ data "aws_iam_role" "aws_service_linked_role" {
 }
 
 
-data "aws_ami" "ubuntu" {
+data "aws_ami" "aws-linux-2" {
     most_recent = true
-    
+    owners      = ["amazon"]
+
     filter {
-        name = "name"
-        values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+        name   = "name"
+        values = ["amzn2-ami-hvm*"]
     }
-    
+
+    filter {
+        name   = "root-device-type"
+        values = ["ebs"]
+    }
+
     filter {
         name   = "virtualization-type"
         values = ["hvm"]
     }
 
-    owners = ["099720109477"] # Canonical
+    filter {
+        name   = "architecture"
+        values = ["x86_64"]
+    }
 }
