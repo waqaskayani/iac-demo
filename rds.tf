@@ -1,4 +1,4 @@
-resource "aws_db_subnet_group" "default" {
+/* resource "aws_db_subnet_group" "default" {
     name       = "subnet-group"
     subnet_ids = data.aws_subnet_ids.private_subnets.ids
 
@@ -43,4 +43,4 @@ resource "aws_ssm_parameter" "VD_DB_PASSWORD" {
     type  = "SecureString"
     value = random_password.password.result
     overwrite = true
-}
+} */
