@@ -7,44 +7,31 @@ data "aws_eks_cluster_auth" "cluster" {
 }
 
 module "eks" {
-    source                          = "terraform-aws-modules/eks/aws"
-    cluster_name                    = "vd-cluster"
-    cluster_version                 = "1.18"  # 1.20.4
-    subnets                         = data.aws_subnet_ids.private_subnets.ids
-    vpc_id                          = module.vpc.vpc_id
-    cluster_endpoint_public_access  = false
-    cluster_endpoint_private_access = true
-    cluster_create_endpoint_private_access_sg_rule = true
-    cluster_endpoint_private_access_cidrs          = [ var.vpc_cidr ]
+    source          = "terraform-aws-modules/eks/aws"
+    cluster_name    = "vd-cluster"
+    cluster_version = "1.17"  # use latest version
+    subnets         = data.aws_subnet_ids.private_subnets.ids
+    vpc_id          = module.vpc.vpc_id
 
-    worker_groups = [
-        {
-            name                 = "staging-vd-workers"
-            instance_type        = "t2.small"
-            asg_desired_capacity = 1
-            asg_max_size         = 3
-            asg_min_size         = 1
-            /* root_volume_type     = "gp2"
-            root_volume_size     = 8
-            ami_id               = "ami-0000000000"
-            ebs_optimized     = false
-            key_name          = "all"
-            enable_monitoring = false */
+    node_groups = {    # user worker
+        private = {
+            subnets          = data.aws_subnet_ids.private_subnets.ids
+            desired_capacity = 1
+            max_capacity     = 3
+            min_capacity     = 1
 
-            tags = [
-                {
-                    "key"                 = "Environment"
-                    "propagate_at_launch" = "true"
-                    "value"               = "staging"
-                },
-                {
-                    "key"                 = "Organization"
-                    "propagate_at_launch" = "true"
-                    "value"               = "Emumba"
-                }
-            ]
+            name_prefix      = "staging-vd-workers-"
+            instance_types   = ["t2.small"]
+            k8s_labels = {
+                Environment  = "private"
+            }
+
+            tags = {
+                Environment  = "staging"
+                Organization = "Emumba"
+            }
         }
-    ]
+    }
 
     map_users = [
         {
