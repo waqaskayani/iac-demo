@@ -9,7 +9,55 @@ resource "aws_launch_configuration" "wireguard_lc" {
     user_data = <<-EOF
     #!/bin/bash
     apt update -y
+    apt install software-properties-common -y
+    add-apt-repository ppa:wireguard/wireguard -y
+    apt update
+    apt install wireguard-dkms wireguard-tools qrencode -y
 
+
+    NET_FORWARD="net.ipv4.ip_forward=1"
+    sysctl -w  ${NET_FORWARD}
+    sed -i "s:#${NET_FORWARD}:${NET_FORWARD}:" /etc/sysctl.conf
+
+    cd /etc/wireguard
+
+    umask 077
+
+    SERVER_PRIVKEY=$( wg genkey )
+    SERVER_PUBKEY=$( echo $SERVER_PRIVKEY | wg pubkey )
+
+    echo $SERVER_PUBKEY > ./server_public.key
+    echo $SERVER_PRIVKEY > ./server_private.key
+
+
+    ENDPOINT=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
+    echo $ENDPOINT > ./endpoint.var
+    echo ":54321" >> ./endpoint.var
+
+    echo "10.50.0.1" | grep -o -E '([0-9]+\.){3}' > ./vpn_subnet.var
+
+    echo "8.8.8.8" > ./dns.var
+
+    echo 1 > ./last_used_ip.var
+
+    echo "eth0" > ./wan_interface_name.var
+
+    cat ./endpoint.var | sed -e "s/:/ /" | while read SERVER_EXTERNAL_IP SERVER_EXTERNAL_PORT
+    do
+    cat > ./wg0.conf.def << CONF
+    [Interface]
+    Address = $SERVER_IP
+    SaveConfig = false
+    PrivateKey = $SERVER_PRIVKEY
+    ListenPort = $SERVER_EXTERNAL_PORT
+    PostUp   = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o $WAN_INTERFACE_NAME -j MASQUERADE;
+    PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o $WAN_INTERFACE_NAME -j MASQUERADE;
+    CONF
+    done
+
+    cp -f ./wg0.conf.def ./wg0.conf
+    systemctl enable wg-quick@wg0
+    ufw allow 54321/udp
 EOF
     lifecycle {
         create_before_destroy = true
