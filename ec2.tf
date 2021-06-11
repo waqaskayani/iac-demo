@@ -102,15 +102,6 @@ resource "aws_autoscaling_group" "wireguard_asg" {
     ])
 }
 
-
-data "aws_instance" "wireguard_instance" {
-    filter {
-        name   = "tag:Name"
-        values = [ aws_autoscaling_group.wireguard_asg.name ]
-    }
-}
-
-
 resource "aws_eip" "eip" {
     vpc      = true
 
