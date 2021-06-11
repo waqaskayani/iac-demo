@@ -118,3 +118,11 @@ resource "aws_eip" "eip" {
       "CreatedBy" = "Waqas Kayani"
     }
 }
+
+
+data "aws_instance" "wireguard_instance" {
+    filter {
+        name   = "tag:Name"
+        values = [ aws_autoscaling_group.wireguard_asg.name ]
+    }
+}
