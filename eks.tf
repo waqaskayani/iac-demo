@@ -14,13 +14,13 @@ module "eks" {
     vpc_id                          = module.vpc.vpc_id
 
     # Public Access
-    cluster_endpoint_public_access                    = true
+    /* cluster_endpoint_public_access                    = false */
     /* cluster_endpoint_public_access_cidrs           = [ "${aws_eip.eip.public_ip}/32", "18.191.140.48/32" ] */
 
     # Private Access
-    /* cluster_endpoint_private_access                = true
+    cluster_endpoint_private_access                   = true
     cluster_create_endpoint_private_access_sg_rule    = true
-    cluster_endpoint_private_access_cidrs             = [ module.vpc.vpc_cidr_block, "10.0.0.0/16" ] */
+    cluster_endpoint_private_access_cidrs             = [ module.vpc.vpc_cidr_block, "10.0.0.0/16", "18.191.140.48/32" ]
     /* cluster_endpoint_private_access_sg                = [  ] # List of sg ids that can access cluster */
 
     worker_groups = [
