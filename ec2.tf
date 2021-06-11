@@ -49,7 +49,8 @@ resource "aws_launch_configuration" "wireguard_lc" {
 
     echo 1 > ./last_used_ip.var
 
-    echo "eth0" > ./wan_interface_name.var
+    WAN_INTERFACE_NAME="eth0"
+    echo $WAN_INTERFACE_NAME > ./wan_interface_name.var
 
     cat ./endpoint.var | sed -e "s/:/ /" | while read SERVER_EXTERNAL_IP SERVER_EXTERNAL_PORT
     do
@@ -68,7 +69,9 @@ resource "aws_launch_configuration" "wireguard_lc" {
     systemctl enable wg-quick@wg0
     ufw allow 54321/udp
 
+    cd /home/ubuntu
     git clone https://github.com/isystem-io/wireguard-aws.git
+    chown -R ubuntu:ubuntu wireguard-aws
 EOF
     lifecycle {
         create_before_destroy = true
