@@ -2,6 +2,7 @@ resource "aws_launch_configuration" "wireguard_lc" {
     name_prefix           = "wireguard-lc"
     image_id              = data.aws_ami.ubuntu.id
     instance_type         = "t2.small"
+    iam_instance_profile  = aws_iam_instance_profile.wireguard_instance_profile.name
     key_name              = var.key_name
     enable_monitoring     = false
     ebs_optimized         = false
@@ -9,6 +10,10 @@ resource "aws_launch_configuration" "wireguard_lc" {
     user_data = <<-EOF
     #!/bin/bash
     apt update -y
+
+    aws ec2 disassociate-address --public-ip $(curl http://169.254.169.254/latest/meta-data/public-ipv4) --region $(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
+    aws ec2 associate-address --instance-id $(curl -s http://169.254.169.254/latest/meta-data/instance-id) --allocation-id ${aws_eip.eip.id} --region $(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
+
     apt install software-properties-common -y
     add-apt-repository ppa:wireguard/wireguard -y
     apt update
@@ -107,7 +112,6 @@ data "aws_instance" "wireguard_instance" {
 
 
 resource "aws_eip" "eip" {
-    instance = data.aws_instance.wireguard_instance.id
     vpc      = true
 
     tags = {
