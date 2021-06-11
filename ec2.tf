@@ -110,4 +110,9 @@ data "aws_instance" "wireguard_instance" {
 resource "aws_eip" "eip" {
     instance = data.aws_instance.wireguard_instance.id
     vpc      = true
+
+    tags = {
+      "Name" = "wireguard-eip"
+      "CreatedBy" = "Waqas Kayani"
+    }
 }
