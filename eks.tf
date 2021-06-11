@@ -9,14 +9,19 @@ data "aws_eks_cluster_auth" "cluster" {
 module "eks" {
     source                          = "terraform-aws-modules/eks/aws"
     cluster_name                    = "vd-staging-cluster"
-    cluster_version                 = "1.20"  # 1.20.4
+    cluster_version                 = "1.20"
     subnets                         = module.vpc.private_subnets
     vpc_id                          = module.vpc.vpc_id
-    cluster_endpoint_public_access  = true
-    cluster_endpoint_public_access_cidrs           = [ "${aws_eip.eip.public_ip}/32", "18.191.140.48/32" ]
-    /* cluster_endpoint_private_access             = true
-    cluster_create_endpoint_private_access_sg_rule = true
-    cluster_endpoint_private_access_cidrs          = [ "182.191.83.208/32", "115.186.190.137/32" ] */
+
+    # Public Access
+    cluster_endpoint_public_access  = false
+    /* cluster_endpoint_public_access_cidrs           = [ "${aws_eip.eip.public_ip}/32", "18.191.140.48/32" ] */
+
+    # Private Access
+    cluster_endpoint_private_access                   = true
+    cluster_create_endpoint_private_access_sg_rule    = true
+    cluster_endpoint_private_access_cidrs             = [ "${aws_eip.eip.public_ip}/32", "18.191.140.48/32" ]
+    /* cluster_endpoint_private_access_sg                = [  ] # List of sg ids that can access cluster */
 
     worker_groups = [
         {
