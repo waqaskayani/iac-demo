@@ -55,25 +55,17 @@ resource "aws_security_group" "wireguard_sg" {
     }
 }
 
-/* 
-######################
+
+/* ######################
 ##### VPC Peering ####
 ######################
 resource "aws_vpc_peering_connection" "vpc_peering" {
   vpc_id        = module.vpc.vpc_id
-  peer_vpc_id   = element(tolist(data.aws_vpcs.vpc.ids), 0)
+  peer_vpc_id   = "vpc-0e97b99574d5e3eb6"
   peer_owner_id = data.aws_caller_identity.current.account_id
   auto_accept   = true
 
   tags = {
     Name = "EKS VPC Peering Connection"
-  }
-}
-
-
-# Retreiving vpc using vpc name to allow access to EKS Custer
-data "aws_vpcs" "vpc" {
-  tags = {
-    Name = var.access_vpc_name
   }
 } */

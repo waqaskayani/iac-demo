@@ -20,7 +20,7 @@ module "eks" {
     # Private Access
     cluster_endpoint_private_access                   = true
     cluster_create_endpoint_private_access_sg_rule    = true
-    cluster_endpoint_private_access_cidrs             = [ "${aws_eip.eip.public_ip}/32", "18.191.140.48/32", module.vpc.vpc_cidr_block ]
+    cluster_endpoint_private_access_cidrs             = [ "18.191.140.48/32", module.vpc.vpc_cidr_block, "10.0.0.0/16" ]
     /* cluster_endpoint_private_access_sg                = [  ] # List of sg ids that can access cluster */
 
     worker_groups = [
