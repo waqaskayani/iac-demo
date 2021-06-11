@@ -11,6 +11,11 @@ resource "aws_launch_configuration" "wireguard_lc" {
     #!/bin/bash
     apt update -y
 
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    apt install unzip -y
+    unzip awscliv2.zip
+    ./aws/install
+
     aws ec2 disassociate-address --public-ip $(curl http://169.254.169.254/latest/meta-data/public-ipv4) --region $(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
     aws ec2 associate-address --instance-id $(curl -s http://169.254.169.254/latest/meta-data/instance-id) --allocation-id ${aws_eip.eip.id} --region $(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
 
