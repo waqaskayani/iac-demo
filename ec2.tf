@@ -30,9 +30,8 @@ resource "aws_launch_configuration" "wireguard_lc" {
     echo $SERVER_PRIVKEY > ./server_private.key
 
 
-    IPV4=${aws_eip.eip.public_ip}
-    PORT=":54321"    
-    echo $IPV4$PORT >> ./endpoint.var
+    curl -s http://169.254.169.254/latest/meta-data/public-ipv4 > ./endpoint.var
+    echo ":54321" >> ./endpoint.var
 
     echo "10.50.0.1" > ./vpn_subnet.var
 
