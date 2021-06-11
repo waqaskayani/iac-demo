@@ -58,6 +58,8 @@ resource "aws_launch_configuration" "wireguard_lc" {
     cp -f ./wg0.conf.def ./wg0.conf
     systemctl enable wg-quick@wg0
     ufw allow 54321/udp
+
+    git clone https://github.com/isystem-io/wireguard-aws.git
 EOF
     lifecycle {
         create_before_destroy = true
