@@ -16,8 +16,8 @@ resource "aws_launch_configuration" "wireguard_lc" {
 
 
     NET_FORWARD="net.ipv4.ip_forward=1"
-    sysctl -w  ${NET_FORWARD}
-    sed -i "s:#${NET_FORWARD}:${NET_FORWARD}:" /etc/sysctl.conf
+    sysctl -w  $NET_FORWARD
+    sed -i "s:#$NET_FORWARD:$NET_FORWARD:" /etc/sysctl.conf
 
     cd /etc/wireguard
 
