@@ -69,3 +69,45 @@ resource "aws_vpc_peering_connection" "vpc_peering" {
     Name = "EKS VPC Peering Connection"
   }
 }
+
+
+#################
+##### EKS SG ####
+#################
+resource "aws_security_group" "eks_cluster_sg" {
+  name   = "eks-cluster-sg"
+  vpc_id = module.vpc.vpc_id
+
+  # SSH access from emumba vpn
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [ module.vpc.vpc_cidr_block ]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [ "18.191.140.48/32" ]   # Jenkins Public IP
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [ "${aws_eip.eip.public_ip}/32" ]   # Wireguard Public IP
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+      Name = "eks-cluster-sg"
+    }
+}
