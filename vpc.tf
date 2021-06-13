@@ -60,8 +60,8 @@ resource "aws_security_group" "wireguard_sg" {
 ##### VPC Peering ####
 ######################
 resource "aws_vpc_peering_connection" "vpc_peering" {
-  vpc_id        = module.vpc.vpc_id
-  peer_vpc_id   = "vpc-0e97b99574d5e3eb6"
+  vpc_id        = "vpc-0e97b99574d5e3eb6"
+  peer_vpc_id   = module.vpc.vpc_id
   peer_owner_id = data.aws_caller_identity.current.account_id
   auto_accept   = true
 
@@ -111,3 +111,38 @@ resource "aws_security_group" "eks_cluster_sg" {
       Name = "eks-cluster-sg"
     }
 }
+
+
+#####################
+##### Route53 SG ####
+#####################
+/* resource "aws_security_group" "route53_sg" {
+  name   = "route53-sg"
+  vpc_id = module.vpc.vpc_id
+
+  # SSH access from emumba vpn
+  ingress {
+    from_port   = 53
+    to_port     = 53
+    protocol    = "tcp"
+    cidr_blocks = [ "10.0.0.0/16" ]
+  }
+
+  ingress {
+    from_port   = 53
+    to_port     = 53
+    protocol    = "udp"
+    cidr_blocks = [ "10.0.0.0/16" ]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+      Name = "route53-sg"
+    }
+} */
