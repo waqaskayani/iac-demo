@@ -1,4 +1,4 @@
-resource "aws_route53_resolver_endpoint" "eks_endpoint" {
+/* resource "aws_route53_resolver_endpoint" "eks_endpoint" {
     name      = "Inbound-EKS-Endpoint"
     direction = "INBOUND"
 
@@ -13,4 +13,4 @@ resource "aws_route53_resolver_endpoint" "eks_endpoint" {
     tags = {
         Name      = "Inbound-EKS-Endpoint"
     }
-}
+} */
