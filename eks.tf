@@ -14,7 +14,7 @@ module "eks" {
     vpc_id                          = module.vpc.vpc_id
 
     # Public Access
-    /* cluster_endpoint_public_access                    = true */
+    cluster_endpoint_public_access                    = false
     /* cluster_endpoint_public_access_cidrs           = [ "${aws_eip.eip.public_ip}/32", "18.191.140.48/32" ] */
 
     # Private Access
