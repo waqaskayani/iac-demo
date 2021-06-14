@@ -154,7 +154,7 @@ resource "aws_security_group" "wireguard_sg" {
 }
 
 
-/* #################
+#################
 ##### EKS SG ####
 #################
 resource "aws_security_group" "eks_cluster_sg" {
@@ -192,4 +192,4 @@ resource "aws_security_group" "eks_cluster_sg" {
   tags = {
       Name = "eks-cluster-sg"
     }
-} */
+}
