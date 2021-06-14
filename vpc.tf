@@ -56,7 +56,7 @@ resource "aws_security_group" "wireguard_sg" {
 }
 
 
-######################
+/* ######################
 ##### VPC Peering ####
 ######################
 resource "aws_vpc_peering_connection" "vpc_peering" {
@@ -69,7 +69,7 @@ resource "aws_vpc_peering_connection" "vpc_peering" {
     Name = "EKS VPC Peering Connection"
   }
 }
-
+ */
 
 #################
 ##### EKS SG ####
