@@ -158,7 +158,7 @@ resource "aws_security_group" "eks_cluster_sg" {
 
 ###### Worker SG
 resource "aws_security_group" "worker_sg" {
-  name_prefix = "worker-sg"
+  name_prefix = "eks-worker-sg"
   vpc_id      = data.aws_vpc.vpc.id
 
   ingress {
