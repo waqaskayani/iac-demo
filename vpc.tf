@@ -19,32 +19,32 @@ resource "aws_internet_gateway" "igw" {
 
 ##### Private Subnets
 resource "aws_subnet" "private_subnets" {
-  count                   = length(var.subnet_cidrs_private)
+  count                   = length(local.subnet_cidrs_private)
   vpc_id                  = data.aws_vpc.vpc.id
-  cidr_block              = var.subnet_cidrs_private[count.index]
+  cidr_block              = local.subnet_cidrs_private[count.index]
   map_public_ip_on_launch = "false"
   availability_zone       = data.aws_availability_zones.available.names[count.index]
 
   tags = merge(
     var.additional_tags,
     {
-    Name = "eks | Private-subnet | ${var.subnet_cidrs_private[count.index]} | ${data.aws_availability_zones.available.names[count.index]}",
+    Name = "eks | Private-subnet | ${local.subnet_cidrs_private[count.index]} | ${data.aws_availability_zones.available.names[count.index]}",
     },
   )
 }
 
 ##### Public Subnets
 resource "aws_subnet" "public_subnets" {
-  count                   = length(var.subnet_cidrs_public)
+  count                   = length(local.subnet_cidrs_public)
   vpc_id                  = data.aws_vpc.vpc.id
-  cidr_block              = var.subnet_cidrs_public[count.index]
+  cidr_block              = local.subnet_cidrs_public[count.index]
   map_public_ip_on_launch = "true"
   availability_zone       = data.aws_availability_zones.available.names[count.index]
 
   tags = merge(
     var.additional_tags,
     {
-    Name = "eks | Public-subnet | ${var.subnet_cidrs_public[count.index]} | ${data.aws_availability_zones.available.names[count.index]}",
+    Name = "eks | Public-subnet | ${local.subnet_cidrs_public[count.index]} | ${data.aws_availability_zones.available.names[count.index]}",
     },
   )
 }
@@ -67,7 +67,7 @@ resource "aws_route_table" "rtb_private" {
 }
 
 resource "aws_route_table_association" "rta_private_subnet" {
-  count = length(var.subnet_cidrs_private)
+  count = length(local.subnet_cidrs_private)
   route_table_id = aws_route_table.rtb_private.id
   subnet_id      = element(aws_subnet.private_subnets.*.id, count.index)
 }
@@ -90,7 +90,7 @@ resource "aws_route_table" "rtb_public" {
 }
 
 resource "aws_route_table_association" "rta_public_subnet" {
-  count = length(var.subnet_cidrs_public)
+  count = length(local.subnet_cidrs_public)
   route_table_id = aws_route_table.rtb_public.id
   subnet_id      = element(aws_subnet.public_subnets.*.id, count.index)
 }

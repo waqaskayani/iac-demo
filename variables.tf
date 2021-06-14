@@ -12,14 +12,19 @@ variable "region" {
 
 variable "subnet_cidrs_private" {
     description = "Private Subnet CIDRs for eks"
-    default = ["${cidrsubnet(data.aws_vpc.vpc.cidr_block, 8, 201)}", "${cidrsubnet(data.aws_vpc.vpc.cidr_block, 8, 202)}", "${cidrsubnet(data.aws_vpc.vpc.cidr_block, 8, 203)}"]
-    type = list
+    default = null
 }
 
 variable "subnet_cidrs_public" {
     description = "Public Subnet CIDRs for eks"
-    default = ["${cidrsubnet(data.aws_vpc.vpc.cidr_block, 8, 204)}", "${cidrsubnet(data.aws_vpc.vpc.cidr_block, 8, 205)}", "${cidrsubnet(data.aws_vpc.vpc.cidr_block, 8, 206)}"]
-    type = list
+    default = null
+}
+
+locals {
+    private              = ["${cidrsubnet(data.aws_vpc.vpc.cidr_block, 8, 201)}", "${cidrsubnet(data.aws_vpc.vpc.cidr_block, 8, 202)}", "${cidrsubnet(data.aws_vpc.vpc.cidr_block, 8, 203)}"]
+    subnet_cidrs_private = var.subnet_cidrs_private == null ? local.private : var.subnet_cidrs_private
+    public               = ["${cidrsubnet(data.aws_vpc.vpc.cidr_block, 8, 204)}", "${cidrsubnet(data.aws_vpc.vpc.cidr_block, 8, 205)}", "${cidrsubnet(data.aws_vpc.vpc.cidr_block, 8, 206)}"]
+    subnet_cidrs_public  = var.subnet_cidrs_public == null ? local.public : var.subnet_cidrs_public
 }
 
 variable "key_name" {
