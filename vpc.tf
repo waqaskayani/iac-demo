@@ -146,67 +146,7 @@ resource "aws_security_group" "eks_cluster_sg" {
 
   tags = {
       Name = "eks-cluster-sg"
+      "kubernetes.io/cluster/${local.cluster_name}" = "owned"
+      "aws:eks:cluster-name" = local.cluster_name
     }
 }
-
-/* #### Rule for Worker SG
-#### Worker SG
-data "aws_security_group" "worker_sg" {
-    id = module.eks.worker_security_group_id
-}
-
-resource "aws_security_group_rule" "worker_sg_rule_cluster" {
-  type              = "ingress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  source_security_group_id = module.eks.cluster_primary_security_group_id
-  security_group_id = data.aws_security_group.worker_sg.id
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-resource "aws_security_group_rule" "worker_sg_rule_access_sg" {
-  type              = "ingress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  source_security_group_id = aws_security_group.eks_cluster_sg.id
-  security_group_id = data.aws_security_group.worker_sg.id
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-#### Rule for Additional SG
-#### Additional SG
-data "aws_security_group" "additional_sg" {
-    id = module.eks.cluster_security_group_id
-}
-
-resource "aws_security_group_rule" "additional_sg_rule_cluster" {
-  type              = "ingress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  source_security_group_id = module.eks.cluster_primary_security_group_id
-  security_group_id = data.aws_security_group.additional_sg.id
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-resource "aws_security_group_rule" "additional_sg_rule_access_sg" {
-  type              = "ingress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  source_security_group_id = aws_security_group.eks_cluster_sg.id
-  security_group_id = data.aws_security_group.additional_sg.id
-
-  lifecycle {
-    create_before_destroy = true
-  }
-} */
