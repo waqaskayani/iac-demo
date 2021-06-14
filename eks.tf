@@ -34,7 +34,6 @@ module "eks" {
             asg_desired_capacity = 1
             asg_max_size         = 3
             asg_min_size         = 1
-            additional_security_group_ids = [ aws_security_group.worker_group_sg.id ]
             /* root_volume_type     = "gp2"
             root_volume_size     = 8
             ami_id               = "ami-0000000000"

@@ -138,17 +138,10 @@ resource "aws_security_group" "eks_cluster_sg" {
   }
 
   ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [ "18.191.140.48/32" ]
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [ "${aws_eip.eip.public_ip}/32" ]   # Wireguard Public IP
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    security_groups = [ module.eks.cluster_primary_security_group_id ]
   }
 
   egress {
@@ -161,20 +154,4 @@ resource "aws_security_group" "eks_cluster_sg" {
   tags = {
       Name = "eks-cluster-sg"
     }
-}
-
-#################
-### Worker SG ###
-#################
-resource "aws_security_group" "worker_group_sg" {
-  name_prefix = "worker-group-sg"
-  vpc_id      = data.aws_vpc.vpc.id
-
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-
-    cidr_blocks = [ data.aws_vpc.vpc.cidr_block ]
-  }
 }
