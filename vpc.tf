@@ -141,14 +141,21 @@ resource "aws_security_group" "eks_cluster_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    security_groups = [ module.eks.cluster_primary_security_group_id ]
+    security_groups = [ module.eks.cluster_primary_security_group_id ]  # primary sg
   }
 
   ingress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    security_groups = [ module.eks.worker_security_group_id ]
+    security_groups = [ module.eks.worker_security_group_id ]  # worker sg
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    security_groups = [ module.eks.cluster_security_group_id ]  # additional sg
   }
 
 ingress {
@@ -195,6 +202,37 @@ resource "aws_security_group_rule" "worker_sg_rule_access_sg" {
   protocol          = "-1"
   source_security_group_id = aws_security_group.eks_cluster_sg.id
   security_group_id = data.aws_security_group.worker_sg.id
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+#### Rule for Additional SG
+#### Additional SG
+data "aws_security_group" "additional_sg" {
+    id = module.eks.cluster_security_group_id
+}
+
+resource "aws_security_group_rule" "additional_sg_rule_cluster" {
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  source_security_group_id = module.eks.cluster_primary_security_group_id
+  security_group_id = data.aws_security_group.additional_sg.id
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+resource "aws_security_group_rule" "additional_sg_rule_access_sg" {
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  source_security_group_id = aws_security_group.eks_cluster_sg.id
+  security_group_id = data.aws_security_group.additional_sg.id
 
   lifecycle {
     create_before_destroy = true
