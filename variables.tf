@@ -4,6 +4,12 @@ variable "eks_vpc_id" {
     description = "This input variable will set VPC used by EKS."
 }
 
+variable "igw_id" {
+    default     = var_igw_id
+    type        = string
+    description = "This input variable will set IGW used by public subnets."
+}
+
 variable "region" {
     default     = var_region
     type        = string
