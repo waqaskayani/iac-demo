@@ -88,7 +88,7 @@ resource "aws_autoscaling_group" "wireguard_asg" {
     desired_capacity     = 1
     health_check_type    = "EC2"
     health_check_grace_period = 240
-    vpc_zone_identifier   = module.vpc.public_subnets
+    vpc_zone_identifier   = aws_subnet.public_subnets.*.id
     service_linked_role_arn = data.aws_iam_role.aws_service_linked_role.arn
 
     lifecycle {
@@ -114,15 +114,7 @@ resource "aws_eip" "eip" {
     vpc      = true
 
     tags = {
-      "Name" = "wireguard-eip"
-      "CreatedBy" = "Waqas Kayani"
-    }
-}
-
-
-data "aws_instance" "wireguard_instance" {
-    filter {
-        name   = "tag:Name"
-        values = [ aws_autoscaling_group.wireguard_asg.name ]
+        "Name" = "wireguard-eip"
+        "CreatedBy" = "Waqas Kayani"
     }
 }

@@ -1,29 +1,131 @@
-module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
-
-  name = "Velocidata-EKS-VPC"
-  cidr = var.eks_vpc_cidr
-
-  azs             = [data.aws_availability_zones.available.names[0], data.aws_availability_zones.available.names[1], data.aws_availability_zones.available.names[2]]
-  private_subnets = ["${cidrsubnet(var.eks_vpc_cidr, 8, 1)}", "${cidrsubnet(var.eks_vpc_cidr, 8, 2)}", "${cidrsubnet(var.eks_vpc_cidr, 8, 3)}"]
-  public_subnets  = ["${cidrsubnet(var.eks_vpc_cidr, 8, 101)}", "${cidrsubnet(var.eks_vpc_cidr, 8, 102)}", "${cidrsubnet(var.eks_vpc_cidr, 8, 103)}"]
-
-  enable_nat_gateway = true
-  single_nat_gateway  = true
-
-  enable_dns_hostnames = true
-
-  tags = {
-    Purpose = "Testing EKS working for Velocidata"
-    CreatedBy = "Waqas Kayani"
-    ManagedBy = "Terraform"
-  }
+##############################################
+########### VPC Configuration Start ##########
+##############################################
+data "aws_vpc" "vpc" {
+  id = var.eks_vpc_id
 }
 
+##### Internet Gateway
+resource "aws_internet_gateway" "igw" {
+  vpc_id = data.aws_vpc.vpc.id
 
-#######################
-##### Wireguard SG ####
-#######################
+  tags = merge(
+    var.additional_tags,
+    {
+    Name = "eks-igw",
+    },
+  )
+}
+
+##### Private Subnets
+resource "aws_subnet" "private_subnets" {
+  count                   = length(var.subnet_cidrs_private)
+  vpc_id                  = data.aws_vpc.vpc.id
+  cidr_block              = var.subnet_cidrs_private[count.index]
+  map_public_ip_on_launch = "false"
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
+
+  tags = merge(
+    var.additional_tags,
+    {
+    Name = "eks | Private-subnet | ${var.subnet_cidrs_private[count.index]} | ${data.aws_availability_zones.available.names[count.index]}",
+    },
+  )
+}
+
+##### Public Subnets
+resource "aws_subnet" "public_subnets" {
+  count                   = length(var.subnet_cidrs_public)
+  vpc_id                  = data.aws_vpc.vpc.id
+  cidr_block              = var.subnet_cidrs_public[count.index]
+  map_public_ip_on_launch = "true"
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
+
+  tags = merge(
+    var.additional_tags,
+    {
+    Name = "eks | Public-subnet | ${var.subnet_cidrs_public[count.index]} | ${data.aws_availability_zones.available.names[count.index]}",
+    },
+  )
+}
+
+##### Private Route Table
+resource "aws_route_table" "rtb_private" {
+  vpc_id = data.aws_vpc.vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.ngw.id
+  }
+
+  tags = merge(
+    var.additional_tags,
+    {
+    Name = "eks-private-rtb",
+    },
+  )
+}
+
+resource "aws_route_table_association" "rta_private_subnet" {
+  count = length(var.subnet_cidrs_private)
+  route_table_id = aws_route_table.rtb_private.id
+  subnet_id      = element(aws_subnet.private_subnets.*.id, count.index)
+}
+
+##### Public Route Table
+resource "aws_route_table" "rtb_public" {
+  vpc_id = data.aws_vpc.vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags = merge(
+    var.additional_tags,
+    {
+    Name = "eks-public-rtb",
+    },
+  )
+}
+
+resource "aws_route_table_association" "rta_public_subnet" {
+  count = length(var.subnet_cidrs_public)
+  route_table_id = aws_route_table.rtb_public.id
+  subnet_id      = element(aws_subnet.public_subnets.*.id, count.index)
+}
+
+##### EIP for NAT Gateway
+resource "aws_eip" "eip_ngw" {
+  vpc = true
+
+  tags = merge(
+    var.additional_tags,
+    {
+    Name = "eks-eip-ngw",
+    },
+  )
+}
+
+##### NAT Gateway
+resource "aws_nat_gateway" "ngw" {
+  allocation_id = aws_eip.eip_ngw.id
+  subnet_id     = aws_subnet.public_subnets.0.id
+
+  tags = merge(
+    var.additional_tags,
+    {
+    Name = "eks-ngw"
+    },
+  )
+}
+
+############################################
+########### VPC Configuration End ##########
+############################################
+
+
+##### Wireguard SG
 resource "aws_security_group" "wireguard_sg" {
   name   = "wireguard-sg"
   vpc_id = module.vpc.vpc_id
@@ -56,21 +158,6 @@ resource "aws_security_group" "wireguard_sg" {
 }
 
 
-/* ######################
-##### VPC Peering ####
-######################
-resource "aws_vpc_peering_connection" "vpc_peering" {
-  vpc_id        = "vpc-0e97b99574d5e3eb6"
-  peer_vpc_id   = module.vpc.vpc_id
-  peer_owner_id = data.aws_caller_identity.current.account_id
-  auto_accept   = true
-
-  tags = {
-    Name = "EKS VPC Peering Connection"
-  }
-}
- */
-
 #################
 ##### EKS SG ####
 #################
@@ -78,19 +165,11 @@ resource "aws_security_group" "eks_cluster_sg" {
   name   = "eks-cluster-sg"
   vpc_id = module.vpc.vpc_id
 
-  # SSH access from emumba vpn
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = [ module.vpc.vpc_cidr_block ]
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [ "18.191.140.48/32" ]   # Jenkins Public IP
+    cidr_blocks = [ data.aws_vpc.vpc.cidr_block ]
   }
 
   ingress {
@@ -111,38 +190,3 @@ resource "aws_security_group" "eks_cluster_sg" {
       Name = "eks-cluster-sg"
     }
 }
-
-
-#####################
-##### Route53 SG ####
-#####################
-/* resource "aws_security_group" "route53_sg" {
-  name   = "route53-sg"
-  vpc_id = module.vpc.vpc_id
-
-  # SSH access from emumba vpn
-  ingress {
-    from_port   = 53
-    to_port     = 53
-    protocol    = "tcp"
-    cidr_blocks = [ "10.0.0.0/16" ]
-  }
-
-  ingress {
-    from_port   = 53
-    to_port     = 53
-    protocol    = "udp"
-    cidr_blocks = [ "10.0.0.0/16" ]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-      Name = "route53-sg"
-    }
-} */

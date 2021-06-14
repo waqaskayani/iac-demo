@@ -1,6 +1,6 @@
 /* resource "aws_db_subnet_group" "default" {
     name       = "subnet-group"
-    subnet_ids = module.vpc.private_subnets
+    subnet_ids = aws_subnet.private_subnets.*.id
 
     tags = {
         Name = "subnet-group"
