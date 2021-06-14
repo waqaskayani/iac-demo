@@ -162,3 +162,19 @@ resource "aws_security_group" "eks_cluster_sg" {
       Name = "eks-cluster-sg"
     }
 }
+
+#################
+### Worker SG ###
+#################
+resource "aws_security_group" "worker_group_sg" {
+  name_prefix = "worker-group-sg"
+  vpc_id      = data.aws_vpc.vpc.id
+
+  ingress {
+    from_port = 22
+    to_port   = 22
+    protocol  = "tcp"
+
+    cidr_blocks = [ data.aws_vpc.vpc.cidr_block ]
+  }
+}
