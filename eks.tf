@@ -60,12 +60,12 @@ module "eks" {
     map_users = [
         {
             userarn  = "arn:aws:iam::390665042662:user/waqas.kiyani"
-            username = "waqas"
+            username = "waqas.kiyani"
             groups   = ["system:masters"]
         },
         {
             userarn  = "arn:aws:sts::390665042662:assumed-role/velocidata-jenkins-test-role/i-0185da26fa4a5747b"
-            username = "Jenkins"
+            username = "i-0185da26fa4a5747b"
             groups   = ["system:masters"]
         },
 
