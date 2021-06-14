@@ -128,7 +128,7 @@ resource "aws_nat_gateway" "ngw" {
 ##### Wireguard SG
 resource "aws_security_group" "wireguard_sg" {
   name   = "wireguard-sg"
-  vpc_id = module.vpc.vpc_id
+  vpc_id = data.aws_vpc.vpc.id
 
   # SSH access from emumba vpn
   ingress {
@@ -163,7 +163,7 @@ resource "aws_security_group" "wireguard_sg" {
 #################
 resource "aws_security_group" "eks_cluster_sg" {
   name   = "eks-cluster-sg"
-  vpc_id = module.vpc.vpc_id
+  vpc_id = data.aws_vpc.vpc.id
 
   ingress {
     from_port   = 443
