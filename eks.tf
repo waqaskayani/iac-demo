@@ -15,7 +15,7 @@ module "eks" {
 
     # Public Access
     cluster_endpoint_public_access                    = true
-    /* cluster_endpoint_public_access_cidrs           = [ "${aws_eip.eip.public_ip}/32", "18.191.140.48/32" ] */
+    cluster_endpoint_public_access_cidrs              = [ "${aws_eip.eip.public_ip}/32", "18.191.140.48/32" ]
 
     # Private Access
     cluster_endpoint_private_access                   = true
