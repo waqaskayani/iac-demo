@@ -163,3 +163,12 @@ resource "aws_security_group" "eks_cluster_sg" {
     }
 }
 
+#### Rule for Worker SG
+resource "aws_security_group_rule" "worker_sg_rule" {
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  source_security_group_id = module.eks.cluster_primary_security_group_id
+  security_group_id = data.aws_security_group.worker_sg.id
+}

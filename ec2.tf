@@ -118,3 +118,8 @@ resource "aws_eip" "eip" {
         "CreatedBy" = "Waqas Kayani"
     }
 }
+
+#### Worker SG
+data "aws_security_group" "worker_sg" {
+    id = module.eks.worker_security_group_id
+}
