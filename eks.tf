@@ -21,7 +21,7 @@ module "eks" {
     cluster_endpoint_private_access                   = true
     cluster_create_endpoint_private_access_sg_rule    = true
     /* cluster_endpoint_private_access_cidrs             = [ module.vpc.vpc_cidr_block, "18.191.140.48/32", "${aws_eip.eip.public_ip}/32" ] */
-    cluster_endpoint_private_access_sg                = [ aws_security_group.eks_cluster_sg.id ]  # List of sg ids that can access cluster
+    cluster_endpoint_private_access_sg                = [ aws_security_group.eks_cluster_sg.id ]  # List of sg ids that can access cluster. Edit "eks-cluster-sg" security group
 
     worker_groups = [
         {
