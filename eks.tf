@@ -6,9 +6,13 @@ data "aws_eks_cluster_auth" "cluster" {
     name = module.eks.cluster_id
 }
 
+locals {
+    cluster_name = "vd-staging-eks-cluster"
+}
+
 module "eks" {
     source                          = "terraform-aws-modules/eks/aws"
-    cluster_name                    = "vd-staging-eks-cluster"
+    cluster_name                    = local.cluster_name
     cluster_version                 = "1.20"
     subnets                         = aws_subnet.private_subnets.*.id
     vpc_id                          = data.aws_vpc.vpc.id
