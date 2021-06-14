@@ -8,7 +8,7 @@ data "aws_eks_cluster_auth" "cluster" {
 
 module "eks" {
     source                          = "terraform-aws-modules/eks/aws"
-    cluster_name                    = "vd-staging-cluster"
+    cluster_name                    = "vd-staging-eks-cluster"
     cluster_version                 = "1.20"
     subnets                         = aws_subnet.private_subnets.*.id
     vpc_id                          = data.aws_vpc.vpc.id
@@ -25,7 +25,7 @@ module "eks" {
 
     worker_groups = [
         {
-            name                 = "vd-staging-workers"
+            name                 = "private-workers"
             instance_type        = "t2.small"
             asg_desired_capacity = 1
             asg_max_size         = 3
