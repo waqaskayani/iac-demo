@@ -27,6 +27,9 @@ module "eks" {
     /* cluster_endpoint_private_access_cidrs             = [ data.aws_vpc.vpc.cidr_block ]           # "18.191.140.48/32", "${aws_eip.eip.public_ip}/32"  */
     /* cluster_endpoint_private_access_sg                = [ aws_security_group.eks_cluster_sg.id ]  # List of sg ids that can access cluster. Edit "eks-cluster-sg" security group */
 
+    cluster_enabled_log_types       = [ "api","audit","authenticator","controllerManager","scheduler" ]
+    cluster_log_retention_in_days   = 60
+
     worker_groups = [
         {
             name                 = "private-workers"
