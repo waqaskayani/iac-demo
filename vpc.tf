@@ -123,7 +123,7 @@ resource "aws_security_group" "wireguard_sg" {
 }
 
 
-/* #################
+#################
 ##### EKS SG ####
 #################
 resource "aws_security_group" "eks_cluster_sg" {
@@ -154,4 +154,32 @@ resource "aws_security_group" "eks_cluster_sg" {
   tags = {
       Name = "eks-cluster-sg"
     }
-} */
+}
+
+###### Worker SG
+resource "aws_security_group" "worker_sg" {
+  name_prefix = "worker-sg"
+  vpc_id      = data.aws_vpc.vpc.id
+
+  ingress {
+    from_port = 22
+    to_port   = 22
+    protocol  = "tcp"
+
+    cidr_blocks = [ data.aws_vpc.vpc.cidr_block ]
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    security_groups = [ module.eks.cluster_primary_security_group_id ]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
