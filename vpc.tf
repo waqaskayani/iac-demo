@@ -6,15 +6,11 @@ data "aws_vpc" "vpc" {
 }
 
 ##### Internet Gateway
-resource "aws_internet_gateway" "igw" {
-  vpc_id = data.aws_vpc.vpc.id
-
-  tags = merge(
-    var.additional_tags,
-    {
-    Name = "eks-igw",
-    },
-  )
+data "aws_internet_gateway" "igw" {
+  filter {
+    name   = "attachment.vpc-id"
+    values = [data.aws_vpc.vpc.id]
+  }
 }
 
 ##### Private Subnets
@@ -78,7 +74,7 @@ resource "aws_route_table" "rtb_public" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
+    gateway_id = data.aws_internet_gateway.igw.internet_gateway_id
   }
 
   tags = merge(
