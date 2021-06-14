@@ -42,7 +42,7 @@ resource "aws_subnet" "public_subnets" {
   tags = merge(
     var.additional_tags,
     {
-    Name = "eks | Private-subnet | ${local.subnet_cidrs_public[count.index]} | ${data.aws_availability_zones.available.names[count.index]}",
+    Name = "eks | Public-subnet | ${local.subnet_cidrs_public[count.index]} | ${data.aws_availability_zones.available.names[count.index]}",
     "kubernetes.io/cluster/${local.cluster_name}" = "shared"
     "kubernetes.io/role/elb"             = "1"
     },
