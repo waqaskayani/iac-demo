@@ -123,30 +123,21 @@ resource "aws_security_group" "wireguard_sg" {
 }
 
 
-#################
-##### EKS SG ####
-#################
-resource "aws_security_group" "eks_cluster_sg" {
-  name   = "eks-cluster-sg"
-  vpc_id = data.aws_vpc.vpc.id
+#### Rule for Worker SG
+#### Worker SG
+data "aws_security_group" "cluster_sg" {
+    id = module.eks.cluster_primary_security_group_id
+}
 
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [ data.aws_vpc.vpc.cidr_block ]
+resource "aws_security_group_rule" "cluster_sg_ingress_rule" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = [ data.aws_vpc.vpc.cidr_block ]
+  security_group_id = data.aws_security_group.worker_sg.id
+
+  lifecycle {
+    create_before_destroy = true
   }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-      Name = "eks-cluster-sg"
-      "kubernetes.io/cluster/${local.cluster_name}" = "owned"
-      "aws:eks:cluster-name" = local.cluster_name
-    }
 }
