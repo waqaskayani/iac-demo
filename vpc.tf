@@ -172,6 +172,13 @@ resource "aws_security_group" "eks_cluster_sg" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
+    cidr_blocks = [ "18.191.140.48/32" ]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = [ "${aws_eip.eip.public_ip}/32" ]   # Wireguard Public IP
   }
 
