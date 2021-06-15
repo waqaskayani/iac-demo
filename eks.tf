@@ -79,14 +79,14 @@ module "eks" {
 ############################
 
 ##### Addon Policies
-/* resource "helm_release" "ebs_csi" {
+/* resource "helm_release" "ebs_csi" {      # Pin versions
     name       = "aws-ebs-csi-driver"
     repository = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
     chart      = "aws-ebs-csi-driver"
     namespace  = "kube-system"
 }
 
-resource "helm_release" "lb_controller" {
+resource "helm_release" "lb_controller" {        # Pin versions
     name       = "aws-load-balancer-controller"
     repository = "https://aws.github.io/eks-charts"
     chart      = "aws-load-balancer-controller"
@@ -95,18 +95,18 @@ resource "helm_release" "lb_controller" {
         name  = "clusterName"
         value = local.cluster_name
     }
-}
+} */
 
-resource "helm_release" "cluster_autoscaler" {
-    name       = "aws-load-balancer-controller"
+resource "helm_release" "cluster_autoscaler" {      # Pin versions
+    name       = "autoscaler"
     repository = "https://kubernetes.github.io/autoscaler"
-    chart      = "aws-load-balancer-controller"
+    chart      = "cluster-autoscaler"
     namespace  = "kube-system"
     set {
-        name  = "clusterName"
+        name  = "autoDiscovery.clusterName"
         value = local.cluster_name
     }
-} */
+}
 
 
 /* ##### Ingress Controller
