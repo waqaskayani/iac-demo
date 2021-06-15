@@ -90,12 +90,11 @@ resource "helm_release" "ingress_controller" {
     }
 }
 
-
-module "ambassador" {
-    source  = "basisai/ambassador/helm"
+/* module "ambassador" {
+    source  = "basisai/ambassador/aws"
     version = "0.1.2"
     service_annotations = {
         "kubernetes.io/ingress.class" = "alb"
     }
     chart_namespace = "ambassador"
-}
+} */
