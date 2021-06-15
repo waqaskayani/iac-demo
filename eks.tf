@@ -89,3 +89,12 @@ resource "helm_release" "ingress_controller" {
         value = local.cluster_name
     }
 }
+
+
+module "ambassador" {
+    source  = "basisai/ambassador/helm"
+    version = "0.1.2"
+    service_annotations = {
+        "kubernetes.io/ingress.class" = "alb"
+    }
+}
