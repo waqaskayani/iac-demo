@@ -30,7 +30,7 @@ module "eks" {
     cluster_enabled_log_types       = [ "api","audit","authenticator","controllerManager","scheduler" ]
     cluster_log_retention_in_days   = 60
 
-    workers_additional_policies = [ aws_iam_policy.policy_for_workers.arn ]
+    workers_additional_policies = [ aws_iam_policy.workers_autoscaling_policy.arn ]
     worker_groups = [
         {
             name                 = "private-workers"
