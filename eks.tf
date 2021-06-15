@@ -107,7 +107,7 @@ resource "helm_release" "lb_controller" {        # Pin versions
     }
 } */
 
-resource "helm_release" "cluster_autoscaler" {      # Pin versions
+/* resource "helm_release" "cluster_autoscaler" {      # Pin versions
     name       = "autoscaler"
     repository = "https://kubernetes.github.io/autoscaler"
     chart      = "cluster-autoscaler"
@@ -124,7 +124,7 @@ resource "helm_release" "cluster_autoscaler" {      # Pin versions
         name  = "leader-elect"
         value = false
     }
-}
+} */
 
 
 /* ##### Ingress Controller
