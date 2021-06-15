@@ -92,7 +92,7 @@ resource "helm_release" "lb_controller" {
     }
 }
 
-##### Ingress Controller
+/* ##### Ingress Controller
 resource "helm_release" "emissary_ingress" {
     name       = "emissary-ingress"
     repository = "https://s3.amazonaws.com/datawire-static-files/emissary-charts"
@@ -104,4 +104,4 @@ resource "helm_release" "emissary_ingress" {
         value     = "alb"
         type      = "string"
     }
-}
+} */
