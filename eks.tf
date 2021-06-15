@@ -101,10 +101,15 @@ resource "helm_release" "cluster_autoscaler" {      # Pin versions
     name       = "autoscaler"
     repository = "https://kubernetes.github.io/autoscaler"
     chart      = "cluster-autoscaler"
+    create_namespace = true
     namespace  = "kube-system"
     set {
         name  = "autoDiscovery.clusterName"
         value = local.cluster_name
+    }
+    set {
+        name  = "autoscalingGroups[0].name"
+        value = module.eks.workers_asg_names[0]
     }
 }
 
