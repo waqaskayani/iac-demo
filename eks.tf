@@ -114,6 +114,11 @@ resource "helm_release" "cluster_autoscaler" {      # Pin versions
     chart      = "cluster-autoscaler"
     namespace  = "kube-system"
     version    = "9.9.2"
+
+    set {
+        name  = "node-group-auto-discovery"
+        value = "asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/${local.cluster_name}"
+    }
     /* set {
         name  = "autoDiscovery.clusterName"
         value = local.cluster_name
