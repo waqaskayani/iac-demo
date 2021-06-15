@@ -67,3 +67,13 @@ module "eks" {
         }
     ]
 }
+
+
+########################
+#### Addon Policies ####
+########################
+resource "helm_release" "ebs-" {
+    name       = "aws-ebs-csi-driver"
+    repository = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
+    chart      = "aws-ebs-csi-driver"
+}
