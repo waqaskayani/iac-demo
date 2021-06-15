@@ -97,4 +97,5 @@ module "ambassador" {
     service_annotations = {
         "kubernetes.io/ingress.class" = "alb"
     }
+    chart_namespace = "ambassador"
 }
