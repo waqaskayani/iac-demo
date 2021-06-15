@@ -97,6 +97,7 @@ resource "helm_release" "emissary_ingress" {
     name       = "emissary-ingress"
     repository = "https://s3.amazonaws.com/datawire-static-files/emissary-charts"
     chart      = "emissary-ingress"
+    create_namespace = true
     namespace  = "ambassador"
     set {
         name      = "metadata.annotations.kubernetes\\.io/ingress\\.class"
