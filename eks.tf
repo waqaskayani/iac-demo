@@ -39,6 +39,7 @@ module "eks" {
             asg_min_size         = 1
             root_volume_type     = "gp3"
             root_volume_size     = 8
+            workers_role_name    = aws_iam_role.role_for_workers.name
             /* ami_id               = "ami-0000000000"
             ebs_optimized     = false
             key_name          = "all"
@@ -107,7 +108,7 @@ resource "helm_release" "lb_controller" {        # Pin versions
     }
 } */
 
-/* resource "helm_release" "cluster_autoscaler" {      # Pin versions
+resource "helm_release" "cluster_autoscaler" {      # Pin versions
     name       = "autoscaler"
     repository = "https://kubernetes.github.io/autoscaler"
     chart      = "cluster-autoscaler"
@@ -120,11 +121,7 @@ resource "helm_release" "lb_controller" {        # Pin versions
         name  = "autoscalingGroups[0].name"
         value = module.eks.workers_asg_names[0]
     }
-    set {
-        name  = "leader-elect"
-        value = false
-    }
-} */
+}
 
 
 /* ##### Ingress Controller
