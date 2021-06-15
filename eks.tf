@@ -54,6 +54,16 @@ module "eks" {
                     "key"                 = "Organization"
                     "propagate_at_launch" = "true"
                     "value"               = "Emumba"
+                },
+                {
+                    "key"                 = "k8s.io/cluster-autoscaler/${local.cluster_name}"
+                    "propagate_at_launch" = "true"
+                    "value"               = "owned"
+                },
+                {
+                    "key"                 = "k8s.io/cluster-autoscaler/enabled"
+                    "propagate_at_launch" = "true"
+                    "value"               = "true"
                 }
             ]
         }
