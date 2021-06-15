@@ -111,7 +111,6 @@ resource "helm_release" "cluster_autoscaler" {      # Pin versions
     name       = "autoscaler"
     repository = "https://kubernetes.github.io/autoscaler"
     chart      = "cluster-autoscaler"
-    create_namespace = true
     namespace  = "kube-system"
     set {
         name  = "autoDiscovery.clusterName"
@@ -121,10 +120,10 @@ resource "helm_release" "cluster_autoscaler" {      # Pin versions
         name  = "autoscalingGroups[0].name"
         value = module.eks.workers_asg_names[0]
     }
-    values = [<<EOF
-    args: [ "--leader-elect=false" ]
-EOF
-]
+    set {
+        name  = "leader-elect"
+        value = false
+    }
 }
 
 
