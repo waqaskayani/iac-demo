@@ -39,7 +39,7 @@ module "eks" {
             asg_min_size         = 1
             root_volume_type     = "gp3"
             root_volume_size     = 8
-            worker_iam_role_name    = aws_iam_role.role_for_workers.name
+            workers_additional_policies = [ aws_iam_policy.policy_for_workers.arn ]
             /* ami_id               = "ami-0000000000"
             ebs_optimized     = false
             key_name          = "all"
