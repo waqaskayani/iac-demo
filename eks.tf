@@ -113,6 +113,7 @@ resource "helm_release" "cluster_autoscaler" {      # Pin versions
     repository = "https://kubernetes.github.io/autoscaler"
     chart      = "cluster-autoscaler"
     namespace  = "kube-system"
+    version    = "9.9.2"
     set {
         name  = "autoDiscovery.clusterName"
         value = local.cluster_name
