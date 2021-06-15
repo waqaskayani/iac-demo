@@ -30,6 +30,7 @@ module "eks" {
     cluster_enabled_log_types       = [ "api","audit","authenticator","controllerManager","scheduler" ]
     cluster_log_retention_in_days   = 60
 
+    workers_additional_policies = [ aws_iam_policy.policy_for_workers.arn ]
     worker_groups = [
         {
             name                 = "private-workers"
@@ -39,7 +40,6 @@ module "eks" {
             asg_min_size         = 1
             root_volume_type     = "gp3"
             root_volume_size     = 8
-            workers_additional_policies = [ aws_iam_policy.policy_for_workers.arn ]
             /* ami_id               = "ami-0000000000"
             ebs_optimized     = false
             key_name          = "all"
