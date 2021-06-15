@@ -69,9 +69,11 @@ module "eks" {
 }
 
 
-########################
-#### Addon Policies ####
-########################
+############################
+#### Helm Installations ####
+############################
+
+##### Addon Policies
 resource "helm_release" "ebs_csi" {
     name       = "aws-ebs-csi-driver"
     repository = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
@@ -79,7 +81,7 @@ resource "helm_release" "ebs_csi" {
     namespace  = "kube-system"
 }
 
-resource "helm_release" "ingress_controller" {
+resource "helm_release" "lb_controller" {
     name       = "aws-load-balancer-controller"
     repository = "https://aws.github.io/eks-charts"
     chart      = "aws-load-balancer-controller"
@@ -90,11 +92,15 @@ resource "helm_release" "ingress_controller" {
     }
 }
 
-module "ambassador" {
-    source  = "basisai/ambassador/aws"
-    version = "0.1.2"
-    service_annotations = {
-        "kubernetes.io/ingress.class" = "alb"
+##### Ingress Controller
+resource "helm_release" "emissary_ingress" {
+    name       = "emissary-ingress"
+    repository = "https://s3.amazonaws.com/datawire-static-files/emissary-charts"
+    chart      = "emissary-ingress"
+    namespace  = "ambassador"
+    set {
+        name  = "kubernetes.io/ingress.class"
+        value = "alb"
+        type  = "string"
     }
-    chart_namespace = "ambassador"
 }
