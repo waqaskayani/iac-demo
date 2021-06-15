@@ -78,3 +78,10 @@ resource "helm_release" "ebs_csi" {
     chart      = "aws-ebs-csi-driver"
     namespace  = "kube-system"
 }
+
+resource "helm_release" "ingress_controller" {
+    name       = "aws-load-balancer-controller"
+    repository = "https://aws.github.io/eks-charts"
+    chart      = "aws-load-balancer-controller"
+    namespace  = "kube-system"
+}
