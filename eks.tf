@@ -99,8 +99,8 @@ resource "helm_release" "emissary_ingress" {
     chart      = "emissary-ingress"
     namespace  = "ambassador"
     set {
-        name  = "kubernetes.io/ingress.class"
-        value = "alb"
-        type  = "string"
+        name      = "metadata.annotations.kubernetes\\.io/ingress\\.class"
+        value     = "alb"
+        type      = "string"
     }
 }
