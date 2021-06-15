@@ -109,19 +109,19 @@ resource "helm_release" "lb_controller" {        # Pin versions
 } */
 
 resource "helm_release" "cluster_autoscaler" {      # Pin versions
-    name       = "autoscaler"
+    name       = "my-release"
     repository = "https://kubernetes.github.io/autoscaler"
     chart      = "cluster-autoscaler"
     namespace  = "kube-system"
     version    = "9.9.2"
-    set {
+    /* set {
         name  = "autoDiscovery.clusterName"
         value = local.cluster_name
-    }
-    set {
+    } */
+    /* set {
         name  = "autoscalingGroups[0].name"
         value = module.eks.workers_asg_names[0]
-    }
+    } */
 }
 
 
