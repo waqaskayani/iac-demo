@@ -121,6 +121,10 @@ resource "helm_release" "cluster_autoscaler" {      # Pin versions
         name  = "autoscalingGroups[0].name"
         value = module.eks.workers_asg_names[0]
     }
+    values = [<<EOF
+    args: [ "--leader-elect=false" ]
+EOF
+]
 }
 
 
