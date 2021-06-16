@@ -19,9 +19,6 @@ terraform {
     }
 }
 
-provider "kubectl" {
-}
-
 
 provider "helm" {
   kubernetes {
