@@ -117,7 +117,7 @@ resource "helm_release" "cluster_autoscaler" {      # Pin versions
 
     set {
         name  = "node-group-auto-discovery"
-        value = "asg:tag=k8s\\.io/cluster-autoscaler/enabled,k8s\\.io/cluster-autoscaler/${local.cluster_name}"
+        value = "asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/${local.cluster_name}"
     }
     /* set {
         name  = "autoDiscovery.clusterName"
