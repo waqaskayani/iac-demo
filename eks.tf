@@ -108,7 +108,7 @@ resource "helm_release" "lb_controller" {        # Pin versions
     }
 } */
 
-resource "helm_release" "cluster_autoscaler" {      # Pin versions
+/* resource "helm_release" "cluster_autoscaler" {      # Pin versions
     name       = "my-release"
     repository = "https://kubernetes.github.io/autoscaler"
     chart      = "cluster-autoscaler"
@@ -119,15 +119,15 @@ resource "helm_release" "cluster_autoscaler" {      # Pin versions
         name  = "node-group-auto-discovery"
         value = "asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/${local.cluster_name}"
     }
-    /* set {
+    set {
         name  = "autoDiscovery.clusterName"
         value = local.cluster_name
-    } */
-    /* set {
+    }
+    set {
         name  = "autoscalingGroups[0].name"
         value = module.eks.workers_asg_names[0]
-    } */
-}
+    }
+} */
 
 
 /* ##### Ingress Controller
