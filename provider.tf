@@ -9,6 +9,11 @@ provider "kubernetes" {
     load_config_file       = false
 }
 
+provider "kubectl" {
+    source  = "gavinbunney/kubectl"
+    version = ">= 1.7.0"
+}
+
 provider "helm" {
   kubernetes {
     host                   = data.aws_eks_cluster.cluster.endpoint
