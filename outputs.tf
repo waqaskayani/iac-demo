@@ -13,3 +13,15 @@ output "worker_asg_name" {
 output "hcl" {
     value = "${yamldecode(file("pod.yaml"))}"
 }
+
+output "rendered" {
+    value = "${data.template_file.deployment.rendered}"
+}
+
+data "template_file" "deployment" {
+    template = "${file("pod.yaml")}"
+
+    vars {
+        replicas = 3
+    }
+}
