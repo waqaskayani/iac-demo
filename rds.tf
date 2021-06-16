@@ -1,9 +1,9 @@
 /* resource "aws_db_subnet_group" "default" {
-    name       = "subnet-group"
+    name       = "postgres-stage-subnet-group"
     subnet_ids = aws_subnet.private_subnets.*.id
 
     tags = {
-        Name = "subnet-group"
+        Name = "postgres-stage-subnet-group"
     }
 }
 
@@ -15,23 +15,45 @@ resource "random_password" "password" {
 
 resource "aws_db_instance" "app_db" {
     identifier           = "velocidata-stage-postgres"
+
+    ## Storage
     allocated_storage    = 20
+    max_allocated_storage = 100
     storage_type         = "gp2"
+
+    ## Database Engine
     engine               = "postgres"
     engine_version       = "12.5"
-    instance_class       = "db.t2.medium"   # change to db.m6g.large
+    instance_class       = "db.m6g.large"   # change to db.m6g.large
+
+    ## Authentication
     name                 = "postgres"
     username             = "postgres"
     password             = random_password.password.result
-    publicly_accessible  = false
-    multi_az             = false
-    skip_final_snapshot  = false
-    final_snapshot_identifier = "velocidata-stage-postgres-final-snapshot"
-    deletion_protection  = false
-    enabled_cloudwatch_logs_exports = ["postgresql","upgrade"]
-    auto_minor_version_upgrade = false
-    db_subnet_group_name = aws_db_subnet_group.default.id
+
+    ## Network Access
+    db_subnet_group_name   = aws_db_subnet_group.default.id
     vpc_security_group_ids = [module.eks.cluster_primary_security_group_id, module.eks.cluster_security_group_id]
+    publicly_accessible    = false
+
+    ## High availability
+    multi_az             = false
+
+    ## Backup and Restore
+    backup_retention_period   = 14
+    copy_tags_to_snapshot     = true
+    skip_final_snapshot       = false
+    final_snapshot_identifier = "velocidata-stage-postgres-final-snapshot"
+
+    ## Logs
+    enabled_cloudwatch_logs_exports = ["postgresql","upgrade"]
+    performance_insights_enabled    = true
+    monitoring_interval             = 15
+
+    ## Additional
+    maintenance_window         = "Thu:08:04-Thu:08:34"
+    deletion_protection        = true
+    auto_minor_version_upgrade = false
 
     tags = {
             Name = "velocidata-stage-postgres"
