@@ -7,7 +7,7 @@ data "aws_eks_cluster_auth" "cluster" {
 }
 
 locals {
-    cluster_name = "vd-staging-eks-cluster"
+    cluster_name = "vd-staging-eks-cluster-test"
 }
 
 module "eks" {
