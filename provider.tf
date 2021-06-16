@@ -9,15 +9,6 @@ provider "kubernetes" {
     load_config_file       = false
 }
 
-terraform {
-  required_providers {
-    kubectl = {
-      source = "gavinbunney/kubectl"
-      version = "1.11.1"
-    }
-  }
-}
-
 provider "helm" {
   kubernetes {
     host                   = data.aws_eks_cluster.cluster.endpoint
