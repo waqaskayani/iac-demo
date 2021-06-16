@@ -14,7 +14,7 @@ output "hcl" {
     value = "${yamldecode(file("pod.yaml"))}"
 }
 
-output "rendered" {
+/* output "rendered" {
     value = "${data.template_file.deployment.rendered}"
 }
 
@@ -24,4 +24,4 @@ data "template_file" "deployment" {
     vars {
         replicas = 3
     }
-}
+} */
