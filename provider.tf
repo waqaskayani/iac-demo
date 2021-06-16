@@ -9,8 +9,13 @@ provider "kubernetes" {
     load_config_file       = false
 }
 
-provider "kubectl" {
-    version = ">= 1.7.0"
+terraform {
+  required_providers {
+    kubectl = {
+      source = "gavinbunney/kubectl"
+      version = "1.11.1"
+    }
+  }
 }
 
 provider "helm" {
