@@ -1,24 +1,13 @@
-# Simple deployment used to deploy and manage the app in nigelpoulton/getting-started-k8s:1.0
-apiVersion: apps/v1
-kind: Deployment
+# Simple Kubernetes Pod to deploy the app contained in nigelpoulton/getting-started-k8s:1.0
+apiVersion: v1
+kind: Pod
 metadata:
-  name: web-deploy
+  name: hello-pod
   labels:
     app: web
 spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: web
-  template:
-    metadata:
-      labels:
-        app: web
-    spec: 
-      terminationGracePeriodSeconds: 1
-      containers:
-      - name: hello-pod
-        image: nigelpoulton/getting-started-k8s:1.0
-        imagePullPolicy: Always
-        ports:
+  containers:
+    - name: web-ctr
+      image: nigelpoulton/getting-started-k8s:1.0
+      ports:
         - containerPort: 8080
