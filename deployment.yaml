@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: web
-  replicas: 4
+  replicas: 3
   minReadySeconds: 5
   strategy:
     type: RollingUpdate
