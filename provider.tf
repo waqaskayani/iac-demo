@@ -1,3 +1,26 @@
+terraform {
+    required_providers {
+      aws = {
+        source = "hashicorp/aws"
+        version = "3.43.0"
+      },
+      kubernetes = {
+        source = "hashicorp/kubernetes"
+        version = "1.13.4"
+      },
+      kubectl = {
+        source  = "gavinbunney/kubectl"
+        version = "1.11.1"
+      },
+      helm = {
+        source = "hashicorp/helm"
+        version = "2.2.0"
+      }
+    }
+}
+
+
+
 provider "aws" {
   region = var.region
 }
@@ -9,15 +32,6 @@ provider "kubernetes" {
     load_config_file       = false
 }
 
-
-terraform {
-    required_providers {
-      kubectl = {
-        source  = "gavinbunney/kubectl"
-        version = "1.11.1"
-      }
-    }
-}
 
 provider "kubectl" {
     host                   = data.aws_eks_cluster.cluster.endpoint
