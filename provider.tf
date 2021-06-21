@@ -26,25 +26,25 @@ provider "aws" {
 }
 
 provider "kubernetes" {
-    host                   = data.aws_eks_cluster[0].cluster.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster[0].cluster.certificate_authority.0.data)
-    token                  = data.aws_eks_cluster_auth[0].cluster.token
+    host                   = var.eks ? data.aws_eks_cluster.cluster.endpoint : null
+    cluster_ca_certificate = base64decode(var.eks ? data.aws_eks_cluster[0].cluster.certificate_authority.0.data : null)
+    token                  = var.eks ? data.aws_eks_cluster_auth.cluster.token : null
     load_config_file       = false
 }
 
 
 provider "kubectl" {
-    host                   = data.aws_eks_cluster[0].cluster.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster[0].cluster.certificate_authority.0.data)
-    token                  = data.aws_eks_cluster_auth[0].cluster.token
+    host                   = var.eks ? data.aws_eks_cluster.cluster.endpoint : null
+    cluster_ca_certificate = base64decode(var.eks ? data.aws_eks_cluster[0].cluster.certificate_authority.0.data : null)
+    token                  = var.eks ? data.aws_eks_cluster_auth[0].cluster.token : null
     load_config_file       = false
 }
 
 
 provider "helm" {
   kubernetes {
-    host                   = data.aws_eks_cluster[0].cluster.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster[0].cluster.certificate_authority.0.data)
-    token                  = data.aws_eks_cluster_auth[0].cluster.token
+    host                   = var.eks ? data.aws_eks_cluster.cluster.endpoint : null
+    cluster_ca_certificate = base64decode(var.eks ? data.aws_eks_cluster[0].cluster.certificate_authority.0.data : null)
+    token                  = var.eks ? data.aws_eks_cluster_auth[0].cluster.token : null
   }
 }
