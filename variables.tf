@@ -53,6 +53,6 @@ variable "additional_tags" {
 }
 
 variable "rds" {
-    default     = true
+    default     = false
     type        = string
 }
