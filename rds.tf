@@ -53,7 +53,7 @@ resource "aws_db_instance" "app_db" {
     enabled_cloudwatch_logs_exports = ["postgresql","upgrade"]
     performance_insights_enabled    = true
     monitoring_interval             = 15
-    monitoring_role_arn             = aws_iam_role.role_for_rds_enhanced_monitoring.arn
+    monitoring_role_arn             = aws_iam_role.role_for_rds_enhanced_monitoring[0].arn
 
     ## Additional
     maintenance_window         = "Thu:08:04-Thu:08:34"
@@ -69,7 +69,7 @@ resource "aws_ssm_parameter" "VD_DB_PASSWORD" {
     count = var.rds ? 1 : 0
     name  = "/Velocidata/APP/DB_PASSWORD"
     type  = "SecureString"
-    value = random_password.password.result
+    value = random_password.password[0].result
     overwrite = true
 }
 
