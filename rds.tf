@@ -1,4 +1,4 @@
-/* resource "aws_db_subnet_group" "default" {
+resource "aws_db_subnet_group" "default" {
     name       = "postgres-stage-subnet-group"
     subnet_ids = aws_subnet.private_subnets.*.id
 
@@ -65,4 +65,4 @@ resource "aws_ssm_parameter" "VD_DB_PASSWORD" {
     type  = "SecureString"
     value = random_password.password.result
     overwrite = true
-} */
+}
