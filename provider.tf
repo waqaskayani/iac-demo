@@ -26,9 +26,9 @@ provider "aws" {
 }
 
 provider "kubernetes" {
-    host                   = var.eks ? data.aws_eks_cluster.cluster.endpoint : null
+    host                   = var.eks ? data.aws_eks_cluster[0].cluster.endpoint : null
     cluster_ca_certificate = base64decode(var.eks ? data.aws_eks_cluster[0].cluster.certificate_authority.0.data : null)
-    token                  = var.eks ? data.aws_eks_cluster_auth.cluster.token : null
+    token                  = var.eks ? data.aws_eks_cluster_auth[0].cluster.token : null
     load_config_file       = false
 }
 
