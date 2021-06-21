@@ -15,7 +15,7 @@ resource "random_password" "password" {
 }
 
 resource "aws_db_instance" "app_db" {
-    identifier           = "velocidata-stage-postgres"
+    identifier           = "${var.project}-stage-postgres"
 
     ## Storage
     allocated_storage    = 20
@@ -44,7 +44,7 @@ resource "aws_db_instance" "app_db" {
     backup_retention_period   = 14
     copy_tags_to_snapshot     = true
     skip_final_snapshot       = false
-    final_snapshot_identifier = "velocidata-stage-postgres-final-snapshot-${replace(timestamp(), "/[- TZ:]/", "")}"
+    final_snapshot_identifier = "${var.project}-stage-postgres-final-snapshot-${replace(timestamp(), "/[- TZ:]/", "")}"
 
     ## Logs
     enabled_cloudwatch_logs_exports = ["postgresql","upgrade"]
@@ -60,16 +60,9 @@ resource "aws_db_instance" "app_db" {
     tags = merge(
         var.additional_tags,
         {
-        "Name" = "velocidata-stage-postgres"
+        "Name" = "${var.project}-stage-postgres"
         },
     )
-}
-
-resource "aws_ssm_parameter" "VD_DB_PASSWORD" {
-    name  = "/Velocidata/APP/DB_PASSWORD"
-    type  = "SecureString"
-    value = random_password.password.result
-    overwrite = true
 }
 
 

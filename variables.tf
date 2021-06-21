@@ -43,6 +43,11 @@ variable "private_key_path" {
     type        = string
 }
 
+variable "project" {
+    default     = "velocidata"
+    type        = string
+}
+
 variable "additional_tags" {
     default = {
         "CreatedBy" = "Waqas Kayani"

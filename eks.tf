@@ -40,8 +40,7 @@ module "eks" {
             asg_min_size         = 1
             root_volume_type     = "gp3"
             root_volume_size     = 8
-            /* ami_id               = "ami-0000000000"
-            ebs_optimized     = false
+            /* ebs_optimized     = false
             key_name          = "all"
             enable_monitoring = false */
 
