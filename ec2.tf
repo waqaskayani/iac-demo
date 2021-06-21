@@ -113,8 +113,10 @@ resource "aws_autoscaling_group" "wireguard_asg" {
 resource "aws_eip" "eip" {
     vpc      = true
 
-    tags = {
+    tags = merge(
+        var.additional_tags,
+        {
         "Name" = "wireguard-eip"
-        "CreatedBy" = "Waqas Kayani"
-    }
+        },
+    )
 }

@@ -152,7 +152,10 @@ resource "aws_security_group" "wireguard_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-      Name = "wireguard-sg"
-    }
+    tags = merge(
+        var.additional_tags,
+        {
+        "Name" = "wireguard-sg"
+        },
+    )
 }

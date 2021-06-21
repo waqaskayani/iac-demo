@@ -57,9 +57,12 @@ resource "aws_db_instance" "app_db" {
     deletion_protection        = false  # set to true
     auto_minor_version_upgrade = false
 
-    tags = {
-            Name = "velocidata-stage-postgres"
-    }
+    tags = merge(
+        var.additional_tags,
+        {
+        "Name" = "velocidata-stage-postgres"
+        },
+    )
 }
 
 resource "aws_ssm_parameter" "VD_DB_PASSWORD" {
