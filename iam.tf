@@ -83,37 +83,3 @@ resource "aws_iam_policy" "workers_autoscaling_policy" {
 }
 EOF
 }
-
-
-
-#### Role for RDS instance
-resource "aws_iam_role" "role_for_rds_enhanced_monitoring" {
-    name = "role-for-rds-enhanced-monitoring"
-
-    assume_role_policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-        "Sid": "",
-        "Effect": "Allow",
-        "Principal": {
-            "Service": [
-            "monitoring.rds.amazonaws.com"
-            ]
-        },
-        "Action": "sts:AssumeRole"
-        }
-    ]
-}
-EOF
-
-    tags = {
-            Name = "role-for-rds-enhanced-monitoring"
-        }
-}
-
-resource "aws_iam_role_policy_attachment" "rds_policy_attach" {
-    role      = aws_iam_role.role_for_rds_enhanced_monitoring.name
-    policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
-}
