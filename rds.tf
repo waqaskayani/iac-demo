@@ -44,7 +44,7 @@ resource "aws_db_instance" "app_db" {
     backup_retention_period   = 14
     copy_tags_to_snapshot     = true
     skip_final_snapshot       = false
-    final_snapshot_identifier = "velocidata-stage-postgres-final-snapshot-${timestamp()}"
+    final_snapshot_identifier = "velocidata-stage-postgres-final-snapshot-${replace(timestamp(), "/[- TZ:]/", "")}"
 
     ## Logs
     enabled_cloudwatch_logs_exports = ["postgresql","upgrade"]
