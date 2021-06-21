@@ -74,3 +74,8 @@ module "common_iam_roles_rds_enhanced_monitoring" {
     source  = "traveloka/common-iam-roles/aws//modules/rds-enhanced-monitoring"
     version = "0.4.6"
 }
+
+module "common-iam-roles" {
+    source  = "traveloka/common-iam-roles/aws"
+    version = "0.4.6"
+}
