@@ -1,0 +1,12 @@
+{
+"CheckboxParameter": [
+    {
+      "key": "EKS",
+      "value": "eks"
+    },
+    {
+      "key": "RDS",
+      "value": "rds"
+    }
+  ]
+}
