@@ -48,9 +48,3 @@ provider "helm" {
     token                  = data.aws_eks_cluster_auth.cluster.token
   }
 }
-
-    /* exec {
-    api_version = "client.authentication.k8s.io/v1alpha1"
-    args        = ["eks", "get-token", "--cluster-name", local.cluster_name]
-    command     = "aws"
-    } */

@@ -53,11 +53,6 @@ variable "additional_tags" {
 }
 
 variable "rds" {
-    default     = false
-    type        = bool
-}
-
-variable "eks" {
-    default     = true
+    default     = var_rds
     type        = bool
 }
