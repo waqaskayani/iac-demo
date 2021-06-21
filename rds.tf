@@ -14,11 +14,6 @@ resource "random_password" "password" {
     override_special = "-_%"
 }
 
-resource "random_string" "random" {
-    length           = 5
-    special          = false
-}
-
 resource "aws_db_instance" "app_db" {
     identifier           = "velocidata-stage-postgres"
 
@@ -49,7 +44,7 @@ resource "aws_db_instance" "app_db" {
     backup_retention_period   = 14
     copy_tags_to_snapshot     = true
     skip_final_snapshot       = false
-    final_snapshot_identifier = "velocidata-stage-postgres-final-snapshot-${random_string.random.result}"
+    final_snapshot_identifier = "velocidata-stage-postgres-final-snapshot-${timestamp()}"
 
     ## Logs
     enabled_cloudwatch_logs_exports = ["postgresql","upgrade"]
