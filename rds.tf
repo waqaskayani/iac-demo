@@ -1,4 +1,5 @@
-/* resource "aws_db_subnet_group" "default" {
+resource "aws_db_subnet_group" "default" {
+    count      = "${var.rds ? 1 : 0}"
     name       = "postgres-stage-subnet-group"
     subnet_ids = aws_subnet.private_subnets.*.id
 
@@ -7,13 +8,16 @@
     }
 }
 
+
 resource "random_password" "password" {
+    count      = "${var.rds ? 1 : 0}"
     length           = 12
     special          = true
     override_special = "-_%"
 }
 
 resource "aws_db_instance" "app_db" {
+    count                = "${var.rds ? 1 : 0}"
     identifier           = "velocidata-stage-postgres"
 
     ## Storage
@@ -62,6 +66,7 @@ resource "aws_db_instance" "app_db" {
 }
 
 resource "aws_ssm_parameter" "VD_DB_PASSWORD" {
+    count = "${var.rds ? 1 : 0}"
     name  = "/Velocidata/APP/DB_PASSWORD"
     type  = "SecureString"
     value = random_password.password.result
@@ -73,7 +78,8 @@ resource "aws_ssm_parameter" "VD_DB_PASSWORD" {
 #### Role for RDS instance
 ##########################
 resource "aws_iam_role" "role_for_rds_enhanced_monitoring" {
-    name = "role-for-rds-enhanced-monitoring"
+    count = "${var.rds ? 1 : 0}"
+    name  = "role-for-rds-enhanced-monitoring"
 
     assume_role_policy = <<EOF
 {
@@ -99,7 +105,7 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "rds_policy_attach" {
-    role      = aws_iam_role.role_for_rds_enhanced_monitoring.name
+    count      = "${var.rds ? 1 : 0}"
+    role       = aws_iam_role.role_for_rds_enhanced_monitoring.name
     policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
-*/
