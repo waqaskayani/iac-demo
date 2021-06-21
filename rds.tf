@@ -1,4 +1,4 @@
-/* resource "aws_db_subnet_group" "default" {
+resource "aws_db_subnet_group" "default" {
     name       = "postgres-stage-subnet-group"
     subnet_ids = aws_subnet.private_subnets.*.id
 
@@ -102,4 +102,4 @@ EOF
 resource "aws_iam_role_policy_attachment" "rds_policy_attach" {
     role       = aws_iam_role.role_for_rds_enhanced_monitoring.name
     policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
-} */
+}
