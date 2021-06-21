@@ -160,7 +160,7 @@ resource "aws_security_group" "wireguard_sg" {
 
 #### Rule for Cluster SG
 data "aws_security_group" "cluster_sg" {
-    id = module.eks[0].cluster_primary_security_group_id
+    id = module.eks.cluster_primary_security_group_id
 }
 
 resource "aws_security_group_rule" "cluster_sg_ingress_rule" {

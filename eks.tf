@@ -125,7 +125,7 @@ resource "helm_release" "lb_controller" {        # Pin versions
     }
     set {
         name  = "autoscalingGroups[0].name"
-        value = module.eks[0].workers_asg_names[0]
+        value = module.eks.workers_asg_names[0]
     }
 } */
 
