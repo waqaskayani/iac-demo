@@ -1,4 +1,4 @@
-/* resource "aws_db_subnet_group" "default" {
+resource "aws_db_subnet_group" "default" {
     name       = "postgres-stage-subnet-group"
     subnet_ids = aws_subnet.private_subnets.*.id
 
@@ -53,7 +53,7 @@ resource "aws_db_instance" "app_db" {
 
     ## Additional
     maintenance_window         = "Thu:08:04-Thu:08:34"
-    deletion_protection        = true
+    deletion_protection        = false
     auto_minor_version_upgrade = false
 
     tags = {
@@ -66,4 +66,4 @@ resource "aws_ssm_parameter" "VD_DB_PASSWORD" {
     type  = "SecureString"
     value = random_password.password.result
     overwrite = true
-} */
+}
