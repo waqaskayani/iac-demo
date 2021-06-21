@@ -1,10 +1,8 @@
 data "aws_eks_cluster" "cluster" {
-    count = var.eks ? 1 : 0
     name  = module.eks[0].cluster_id
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-    count = var.eks ? 1 : 0
     name  = module.eks[0].cluster_id
 }
 
