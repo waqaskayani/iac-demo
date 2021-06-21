@@ -1,11 +1,9 @@
 data "aws_eks_cluster" "cluster" {
-    count = var.eks ? 1 : 0
-    name  = module.eks[0].cluster_id
+    name  = module.eks.cluster_id
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-    count = var.eks ? 1 : 0
-    name  = module.eks[0].cluster_id
+    name  = module.eks.cluster_id
 }
 
 locals {
@@ -13,7 +11,6 @@ locals {
 }
 
 module "eks" {
-    count                           = var.eks ? 1 : 0
     source                          = "terraform-aws-modules/eks/aws"
     cluster_name                    = local.cluster_name
     cluster_version                 = "1.20"
