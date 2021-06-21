@@ -51,8 +51,3 @@ variable "additional_tags" {
     description = "Additional resource tags"
     type        = map(string)
 }
-
-variable "rds" {
-    default     = var_rds
-    type        = bool
-}
