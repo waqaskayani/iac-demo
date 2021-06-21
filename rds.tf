@@ -49,7 +49,7 @@ resource "aws_db_instance" "app_db" {
     enabled_cloudwatch_logs_exports = ["postgresql","upgrade"]
     performance_insights_enabled    = true
     monitoring_interval             = 15
-    monitoring_role_arn             = module.common_iam_roles_rds_enhanced_monitoring.role_arn
+    monitoring_role_arn             = aws_iam_role.role_for_rds_enhanced_monitoring.arn
 
     ## Additional
     maintenance_window         = "Thu:08:04-Thu:08:34"
@@ -66,16 +66,4 @@ resource "aws_ssm_parameter" "VD_DB_PASSWORD" {
     type  = "SecureString"
     value = random_password.password.result
     overwrite = true
-}
-
-
-## Role for RDS Enahanced Monitoring
-module "common_iam_roles_rds_enhanced_monitoring" {
-    source  = "traveloka/common-iam-roles/aws//modules/rds-enhanced-monitoring"
-    version = "0.4.6"
-}
-
-module "common-iam-roles" {
-    source  = "traveloka/common-iam-roles/aws"
-    version = "0.4.6"
 }
