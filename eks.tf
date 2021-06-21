@@ -143,3 +143,26 @@ resource "helm_release" "emissary_ingress" {
         type      = "string"
     }
 } */
+
+
+#######################
+####### EKS Cluster SG
+#######################
+#### Rule for Cluster SG
+data "aws_security_group" "cluster_sg" {
+    id = module.eks.cluster_primary_security_group_id
+}
+
+resource "aws_security_group_rule" "cluster_sg_ingress_rule" {
+    type              = "ingress"
+    from_port         = 443
+    to_port           = 443
+    protocol          = "tcp"
+    description       = "Allow VPC CIDR to access EKS Private Cluster."
+    cidr_blocks       = [ data.aws_vpc.vpc.cidr_block ]
+    security_group_id = data.aws_security_group.cluster_sg.id
+
+    lifecycle {
+        create_before_destroy = true
+    }
+}
