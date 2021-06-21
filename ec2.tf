@@ -1,4 +1,5 @@
 resource "aws_launch_configuration" "wireguard_lc" {
+    count                 = var.eks ? 1 : 0
     name_prefix           = "wireguard-lc"
     image_id              = data.aws_ami.ubuntu.id
     instance_type         = "t2.small"
@@ -17,7 +18,7 @@ resource "aws_launch_configuration" "wireguard_lc" {
     ./aws/install
 
     aws ec2 disassociate-address --public-ip $(curl http://169.254.169.254/latest/meta-data/public-ipv4) --region $(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
-    aws ec2 associate-address --instance-id $(curl -s http://169.254.169.254/latest/meta-data/instance-id) --allocation-id ${aws_eip.eip.id} --region $(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
+    aws ec2 associate-address --instance-id $(curl -s http://169.254.169.254/latest/meta-data/instance-id) --allocation-id ${aws_eip.eip[0].id} --region $(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
 
     apt install software-properties-common -y
     add-apt-repository ppa:wireguard/wireguard -y
@@ -81,8 +82,9 @@ EOF
 ### APP Autoscaling Group ###
 
 resource "aws_autoscaling_group" "wireguard_asg" {
+    count                = var.eks ? 1 : 0
     name                 = "wireguard-asg"
-    launch_configuration = aws_launch_configuration.wireguard_lc.name
+    launch_configuration = aws_launch_configuration.wireguard_lc[0].name
     min_size             = 1
     max_size             = 1
     desired_capacity     = 1
@@ -111,6 +113,7 @@ resource "aws_autoscaling_group" "wireguard_asg" {
 }
 
 resource "aws_eip" "eip" {
+    count    = var.eks ? 1 : 0
     vpc      = true
 
     tags = {

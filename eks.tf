@@ -1,9 +1,11 @@
 data "aws_eks_cluster" "cluster" {
-    name = module.eks.cluster_id
+    count = var.eks ? 1 : 0
+    name  = module.eks.cluster_id
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-    name = module.eks.cluster_id
+    count = var.eks ? 1 : 0
+    name  = module.eks.cluster_id
 }
 
 locals {
@@ -11,6 +13,7 @@ locals {
 }
 
 module "eks" {
+    count                           = var.eks ? 1 : 0
     source                          = "terraform-aws-modules/eks/aws"
     cluster_name                    = local.cluster_name
     cluster_version                 = "1.20"
@@ -19,12 +22,12 @@ module "eks" {
 
     # Public Access
     cluster_endpoint_public_access                    = false
-    /* cluster_endpoint_public_access_cidrs              = [ "${aws_eip.eip.public_ip}/32", "18.191.140.48/32" ] */
+    /* cluster_endpoint_public_access_cidrs              = [ "${aws_eip.eip[0].public_ip}/32", "18.191.140.48/32" ] */
 
     # Private Access
     cluster_endpoint_private_access                   = true
     cluster_create_endpoint_private_access_sg_rule    = true
-    /* cluster_endpoint_private_access_cidrs             = [ data.aws_vpc.vpc.cidr_block ]           # "18.191.140.48/32", "${aws_eip.eip.public_ip}/32"  */
+    /* cluster_endpoint_private_access_cidrs             = [ data.aws_vpc.vpc.cidr_block ]           # "18.191.140.48/32", "${aws_eip.eip[0].public_ip}/32"  */
     /* cluster_endpoint_private_access_sg                = [ aws_security_group.eks_cluster_sg.id ]  # List of sg ids that can access cluster. Edit "eks-cluster-sg" security group */
 
     cluster_enabled_log_types       = [ "api","audit","authenticator","controllerManager","scheduler" ]
