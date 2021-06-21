@@ -7,5 +7,5 @@ output "instance_public_ip" {
 }
 
 output "worker_asg_name" {
-    value = module.eks.workers_asg_names
+    value = module.eks[0].workers_asg_names
 }

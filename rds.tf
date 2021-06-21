@@ -37,7 +37,7 @@ resource "aws_db_instance" "app_db" {
 
     ## Network Access
     db_subnet_group_name   = aws_db_subnet_group.default[0].id
-    vpc_security_group_ids = [module.eks.cluster_primary_security_group_id, module.eks.cluster_security_group_id]
+    vpc_security_group_ids = [module.eks[0].cluster_primary_security_group_id, module.eks[0].cluster_security_group_id]
     publicly_accessible    = false
 
     ## High availability

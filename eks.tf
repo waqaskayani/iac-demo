@@ -1,11 +1,11 @@
 data "aws_eks_cluster" "cluster" {
     count = var.eks ? 1 : 0
-    name  = module.eks.cluster_id
+    name  = module.eks[0].cluster_id
 }
 
 data "aws_eks_cluster_auth" "cluster" {
     count = var.eks ? 1 : 0
-    name  = module.eks.cluster_id
+    name  = module.eks[0].cluster_id
 }
 
 locals {
@@ -128,7 +128,7 @@ resource "helm_release" "lb_controller" {        # Pin versions
     }
     set {
         name  = "autoscalingGroups[0].name"
-        value = module.eks.workers_asg_names[0]
+        value = module.eks[0].workers_asg_names[0]
     }
 } */
 
