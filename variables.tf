@@ -56,3 +56,8 @@ variable "rds" {
     default     = false
     type        = string
 }
+
+variable "eks" {
+    default     = true
+    type        = string
+}
