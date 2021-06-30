@@ -123,6 +123,35 @@ resource "aws_nat_gateway" "ngw" {
 ############################################
 ########### VPC Configuration End ##########
 ############################################
+##### RDS SG
+resource "aws_security_group" "rds_sg" {
+  name   = "velocidata-rds-sg"
+  vpc_id = data.aws_vpc.vpc.id
+
+  # SSH access from emumba vpn
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "tcp"
+    cidr_blocks = [ data.aws_vpc.vpc.cidr_block ]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+    tags = merge(
+        var.additional_tags,
+        {
+        "Name" = "velocidata-rds-sg"
+        },
+    )
+}
+
+
 ##### Wireguard SG
 resource "aws_security_group" "wireguard_sg" {
   name   = "wireguard-sg"
