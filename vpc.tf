@@ -123,8 +123,6 @@ resource "aws_nat_gateway" "ngw" {
 ############################################
 ########### VPC Configuration End ##########
 ############################################
-
-
 ##### Wireguard SG
 resource "aws_security_group" "wireguard_sg" {
   name   = "wireguard-sg"

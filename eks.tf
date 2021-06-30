@@ -7,23 +7,23 @@ data "aws_eks_cluster_auth" "cluster" {
 }
 
 locals {
-    cluster_name = "vd-staging-eks-cluster"
+    cluster_name = var.cluster_name
 }
 
 module "eks" {
     source                          = "terraform-aws-modules/eks/aws"
     cluster_name                    = local.cluster_name
-    cluster_version                 = "1.20"
+    cluster_version                 = var.cluster_version
     subnets                         = aws_subnet.private_subnets.*.id
     vpc_id                          = data.aws_vpc.vpc.id
 
     # Public Access
-    cluster_endpoint_public_access                    = false
-    /* cluster_endpoint_public_access_cidrs              = [ "${aws_eip.eip[0].public_ip}/32", "18.191.140.48/32" ] */
+    cluster_endpoint_public_access                    = var.eks_public_access
+    /* cluster_endpoint_public_access_cidrs              = var.eks_public_access_cidrs */
 
     # Private Access
-    cluster_endpoint_private_access                   = true
-    cluster_create_endpoint_private_access_sg_rule    = true
+    cluster_endpoint_private_access                   = var.eks_private_access
+    cluster_create_endpoint_private_access_sg_rule    = var.eks_private_access
     /* cluster_endpoint_private_access_cidrs             = [ data.aws_vpc.vpc.cidr_block ]           # "18.191.140.48/32", "${aws_eip.eip[0].public_ip}/32"  */
     /* cluster_endpoint_private_access_sg                = [ aws_security_group.eks_cluster_sg.id ]  # List of sg ids that can access cluster. Edit "eks-cluster-sg" security group */
 
@@ -33,15 +33,15 @@ module "eks" {
     workers_additional_policies = [ aws_iam_policy.workers_autoscaling_policy.arn ]
     worker_groups = [
         {
-            name                 = "private-workers"
-            instance_type        = "t2.small"
-            asg_desired_capacity = 1
-            asg_max_size         = 3
-            asg_min_size         = 1
+            name                 = var.worker_names
+            instance_type        = var.worker_instance_type
+            asg_desired_capacity = var.worker_asg_desired
+            asg_max_size         = var.worker_asg_max
+            asg_min_size         = var.worker_asg_min
             root_volume_type     = "gp3"
-            root_volume_size     = 8
+            root_volume_size     = var.worker_volume_size
+            key_name             = var.key_name
             /* ebs_optimized     = false
-            key_name          = "all"
             enable_monitoring = false */
 
             tags = [
@@ -71,77 +71,12 @@ module "eks" {
 
     map_users = [
         {
-            userarn  = "arn:aws:iam::390665042662:user/waqas.kiyani"
-            username = "waqas.kiyani"
-            groups   = ["system:masters"]
-        },
-        {
-            userarn  = "arn:aws:iam::390665042662:user/Husnerabbi"
-            username = "Husnerabbi"
+            userarn  = ""                   # add arn of the format: "arn:aws:iam::AWS_ACCOUNT_ID:user/USER_NAME"
+            username = ""                   # add iam username
             groups   = ["system:masters"]
         }
     ]
 }
-
-
-############################
-#### Helm Installations ####
-############################
-
-##### Addon Policies
-/* resource "helm_release" "ebs_csi" {      # Pin versions
-    name       = "aws-ebs-csi-driver"
-    repository = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
-    chart      = "aws-ebs-csi-driver"
-    namespace  = "kube-system"
-}
-
-resource "helm_release" "lb_controller" {        # Pin versions
-    name       = "aws-load-balancer-controller"
-    repository = "https://aws.github.io/eks-charts"
-    chart      = "aws-load-balancer-controller"
-    namespace  = "kube-system"
-    set {
-        name  = "clusterName"
-        value = local.cluster_name
-    }
-} */
-
-/* resource "helm_release" "cluster_autoscaler" {      # Pin versions
-    name       = "my-release"
-    repository = "https://kubernetes.github.io/autoscaler"
-    chart      = "cluster-autoscaler"
-    namespace  = "kube-system"
-    version    = "9.9.2"
-
-    set {
-        name  = "node-group-auto-discovery"
-        value = "asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/${local.cluster_name}"
-    }
-    set {
-        name  = "autoDiscovery.clusterName"
-        value = local.cluster_name
-    }
-    set {
-        name  = "autoscalingGroups[0].name"
-        value = module.eks.workers_asg_names[0]
-    }
-} */
-
-
-/* ##### Ingress Controller
-resource "helm_release" "emissary_ingress" {
-    name       = "emissary-ingress"
-    repository = "https://s3.amazonaws.com/datawire-static-files/emissary-charts"
-    chart      = "emissary-ingress"
-    create_namespace = true
-    namespace  = "ambassador"
-    set {
-        name      = "metadata.annotations.kubernetes\\.io/ingress\\.class"
-        value     = "alb"
-        type      = "string"
-    }
-} */
 
 
 #######################
@@ -159,9 +94,35 @@ resource "aws_security_group_rule" "cluster_sg_ingress_rule" {
     protocol          = "tcp"
     description       = "Allow VPC CIDR to access EKS Private Cluster."
     cidr_blocks       = [ data.aws_vpc.vpc.cidr_block ]
-    security_group_id = data.aws_security_group.cluster_sg.id
+    security_group_id = data.aws_security_group.cluster_sg.id      # security group to apply this rule to
 
     lifecycle {
         create_before_destroy = true
     }
 }
+
+
+############################
+#### Helm Installations ####
+############################
+
+##### Addon Policies
+/* resource "helm_release" "ebs_csi" {      # Pin version as desired
+    name       = "aws-ebs-csi-driver"
+    repository = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
+    chart      = "aws-ebs-csi-driver"
+    version    = ""
+    namespace  = "kube-system"
+}
+
+resource "helm_release" "lb_controller" {        # Pin version as desired
+    name       = "aws-load-balancer-controller"
+    repository = "https://aws.github.io/eks-charts"
+    chart      = "aws-load-balancer-controller"
+    version    = ""
+    namespace  = "kube-system"
+    set {
+        name  = "clusterName"
+        value = local.cluster_name
+    }
+} */

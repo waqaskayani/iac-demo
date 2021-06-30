@@ -1,0 +1,94 @@
+pipeline{
+    agent any
+    tools {
+        terraform 'terraform'
+    }
+
+    parameters {
+        string(name: 'VPC_ID', defaultValue: "", description: "ID of the VPC to provision reosurces in.")
+        string(name: 'IGW_ID', defaultValue: "", description: "ID of the IGW to be used in public subnet routes.")
+        string(name: 'region', defaultValue: "us-east-1", description: "Region to create resources in.")
+        choice(name: 'terraform', choices: ['Create', 'Destroy'], description: 'Create or destroy Terraform resources.')
+        checkboxParameter(name:'provisioned-resources', description: 'Resources to provision using terraform.', format:'JSON', uri:'https://raw.githubusercontent.com/waqaskayani/iac-demo/master/checkbox.json')  // Static JSON link is passed here as it needs public access to this template
+    }
+
+    stages {
+        stage('Git Checkout'){
+            steps{
+                git url: '', branch: '', credentialsId: ''
+            }
+        }
+        stage('Resource Selection') {
+            steps {
+                dir("deployment/automated-deployment") {
+                    script {
+                        if ( params['provisioned-resources'] == 'eks,rds') {
+                            sh"""
+                                echo 'Selected EKS and RDS..'
+                            """
+                        } else if ( params['provisioned-resources'] == 'eks') {
+                            sh"""
+                                echo 'Selected EKS only..'
+                                sed -i 's/^/#/g' rds.tf
+                            """
+                        } else if ( params['provisioned-resources'] == 'rds') {
+                            sh"""
+                                echo 'Selected RDS only..'
+                                sed -i 's/^/#/g' eks.tf ec2.tf outputs.tf
+                            """
+                        } else {
+                            sh"""
+                                echo 'Nothing selected. Aborting the build..'
+                            """
+                            currentBuild.result = 'ABORTED'
+                        } 
+                    }
+                }
+            }
+        }
+        stage('Update Env Variables'){
+            steps{
+                dir("deployment/automated-deployment") {
+                    sh "pwd"
+                    sh"""
+                        sed -i 's@var_eks_vpc_id@\"'"${params.VPC_ID}"'\"@' variables.tf
+                        sed -i 's@var_igw_id@\"'"${params.IGW_ID}"'\"@' variables.tf
+                        sed -i 's@var_region@\"'"${params.region}"'\"@' variables.tf
+                    """
+                    sh 'cat variables.tf'
+                }
+            }
+        }
+        stage('Terraform Init'){
+            steps{
+                dir("deployment/automated-deployment") {
+                    sh "pwd"
+                    sh label: '', script: 'terraform version'
+                    sh label: '', script: 'terraform init'
+                }
+            }
+        }
+        stage('Terraform Apply'){
+            when {
+                expression { params.terraform == "Create" }
+            }
+            steps{
+                dir("deployment/automated-deployment") {
+                    sh "pwd"
+                    sh "terraform apply --auto-approve"
+                }
+            }
+        }
+        stage('Terraform Destroy'){
+            when {
+                expression { params.terraform == "Destroy" }
+            }
+            steps{
+                dir("deployment/automated-deployment") {
+                    sh "pwd"
+                    sh "terraform destroy --auto-approve"
+                }
+            }
+        }
+    }
+}

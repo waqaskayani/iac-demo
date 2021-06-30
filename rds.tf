@@ -14,7 +14,15 @@ resource "random_password" "password" {
     override_special = "-_%"
 }
 
+resource "aws_ssm_parameter" "POSTGRES_PASSWORD" {
+    name  = "/velocidata/postgres_password"
+    type  = "SecureString"
+    value = random_password.password.result
+    overwrite = true
+}
+
 resource "aws_db_instance" "app_db" {
+    ## General
     identifier           = "${var.project}-stage-postgres"
 
     ## Storage
@@ -24,7 +32,7 @@ resource "aws_db_instance" "app_db" {
 
     ## Database Engine
     engine               = "postgres"
-    engine_version       = "12.5"
+    engine_version       = "13.2"
     instance_class       = "db.m6g.large"   # change to db.m6g.large
 
     ## Authentication
