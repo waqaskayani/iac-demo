@@ -1,0 +1,10 @@
+#!/bin/bash
+
+HOOK_NAMES="pre-commit"
+HOOK_DIR=$(git rev-parse --show-toplevel)/.git/hooks
+SCRIPT_DIR=$(git rev-parse --show-toplevel)/bin
+
+for hook in $HOOK_NAMES; do
+  chmod +x $SCRIPT_DIR/hook
+  ln -s -f $SCRIPT_DIR/hook $HOOK_DIR/$hook
+done
