@@ -5,3 +5,8 @@
 variables.tf
 ssm_params.tf
 !/.gitignore
+!.gitsecret
+.gitsecret/keys/random_seed
+
+secret.txt
+secrets.txt
